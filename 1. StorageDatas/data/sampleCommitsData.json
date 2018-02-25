@@ -1,0 +1,3950 @@
+[
+  {
+    "commit": "3eca86e75ec7a7d4b9a9c8091b11676f7bd2a39f",
+    "tree": "8e1b4380409a85a922ee0d3f622b5dd4d16bcfad",
+    "parent": [
+      "104a0c02e8b1936c049e18a6d4e4ab040fb61213"
+    ],
+    "author": {
+      "name": "Mark Rutland",
+      "email": "1db9dd262beaa64f35756dd39531d9747b7778bb@arm.com",
+      "time_sec": "1456497092",
+      "tz_offset": "0",
+      "date": "2016-02-26 14:31:32.000 UTC"
+    },
+    "committer": {
+      "name": "Catalin Marinas",
+      "email": "15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com",
+      "time_sec": "1456500173",
+      "tz_offset": "0",
+      "date": "2016-02-26 15:22:53.000 UTC"
+    },
+    "subject": "arm64: Remove fixmap include fragility",
+    "message": "arm64: Remove fixmap include fragility\n\nThe asm-generic fixmap.h depends on each architecture's fixmap.h to pull\nin the definition of PAGE_KERNEL_RO, if this exists. In the absence of\nthis, FIXMAP_PAGE_RO will not be defined. In mm/early_ioremap.c the\ndefinition of early_memremap_ro is predicated on FIXMAP_PAGE_RO being\ndefined.\n\nCurrently, the arm64 fixmap.h doesn't include pgtable.h for the\ndefinition of PAGE_KERNEL_RO, and as a knock-on effect early_memremap_ro\nis not always defined, leading to link-time failures when it is used.\nThis has been observed with defconfig on next-20160226.\n\nUnfortunately, as pgtable.h includes fixmap.h, adding the include\nintroduces a circular dependency, which is just as fragile.\n\nInstead, this patch factors out PAGE_KERNEL_RO and other prot\ndefinitions into a new pgtable-prot header which can be included by poth\npgtable.h and fixmap.h, avoiding the  circular dependency, and ensuring\nthat early_memremap_ro is alwyas defined where it is used.\n\nSigned-off-by: Mark Rutland <1db9dd262beaa64f35756dd39531d9747b7778bb@arm.com>\nReported-by: Ard Biesheuvel <66d3c5fdaeea7ff1f996ad04f2c45e08ab38e2f5@linaro.org>\nAcked-by: Ard Biesheuvel <66d3c5fdaeea7ff1f996ad04f2c45e08ab38e2f5@linaro.org>\nCc: Will Deacon <b913f13ef92ac157955c954ccaaff7be065faba4@arm.com>\nSigned-off-by: Catalin Marinas <15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Mark Rutland <1db9dd262beaa64f35756dd39531d9747b7778bb@arm.com>",
+        "email": "1db9dd262beaa64f35756dd39531d9747b7778bb@arm.com"
+      },
+      {
+        "key": "Reported-by",
+        "value": "Ard Biesheuvel <66d3c5fdaeea7ff1f996ad04f2c45e08ab38e2f5@linaro.org>",
+        "email": "66d3c5fdaeea7ff1f996ad04f2c45e08ab38e2f5@linaro.org"
+      },
+      {
+        "key": "Acked-by",
+        "value": "Ard Biesheuvel <66d3c5fdaeea7ff1f996ad04f2c45e08ab38e2f5@linaro.org>",
+        "email": "66d3c5fdaeea7ff1f996ad04f2c45e08ab38e2f5@linaro.org"
+      },
+      {
+        "key": "Cc",
+        "value": "Will Deacon <b913f13ef92ac157955c954ccaaff7be065faba4@arm.com>",
+        "email": "b913f13ef92ac157955c954ccaaff7be065faba4@arm.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Catalin Marinas <15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com>",
+        "email": "15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm64/include/asm/fixmap.h",
+        "new_path": "arch/arm64/include/asm/fixmap.h",
+        "old_sha1": "1a617d46fce93247cf42fd0cda36a1355fc89aa9",
+        "new_sha1": "caf86be815ba2cfa26d6cbcab8ee1cd7f6bdf158",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/arm64/include/asm/pgtable-prot.h",
+        "new_path": "arch/arm64/include/asm/pgtable-prot.h",
+        "old_sha1": null,
+        "new_sha1": "29fcb33ab4019f322922603d7a00757bbfd96ce2",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm64/include/asm/pgtable.h",
+        "new_path": "arch/arm64/include/asm/pgtable.h",
+        "old_sha1": "16438dd8916adead57331b3a74cbc6624ba2aa7f",
+        "new_sha1": "7c73b365fcfab6aab231bc8759216c8d1af6f76b",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  },
+  {
+    "commit": "7158627686f02319c50c8d9d78f75d4c8d126ff2",
+    "tree": "3b4d781bd966f07cad1b67b137f0ff8b89430e9a",
+    "parent": [
+      "66aa8d6a145b6a66566b4fce219cc56c3d0e01c3"
+    ],
+    "author": {
+      "name": "Will Deacon",
+      "email": "b913f13ef92ac157955c954ccaaff7be065faba4@arm.com",
+      "time_sec": "1383675047",
+      "tz_offset": "0",
+      "date": "2013-11-05 18:10:47.000 UTC"
+    },
+    "committer": {
+      "name": "Catalin Marinas",
+      "email": "15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com",
+      "time_sec": "1387474986",
+      "tz_offset": "0",
+      "date": "2013-12-19 17:43:06.000 UTC"
+    },
+    "subject": "arm64: percpu: implement optimised pcpu access using tpidr_el1",
+    "message": "arm64: percpu: implement optimised pcpu access using tpidr_el1\n\nThis patch implements optimised percpu variable accesses using the\nel1 r/w thread register (tpidr_el1) along the same lines as arch/arm/.\n\nSigned-off-by: Will Deacon <b913f13ef92ac157955c954ccaaff7be065faba4@arm.com>\nSigned-off-by: Catalin Marinas <15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Will Deacon <b913f13ef92ac157955c954ccaaff7be065faba4@arm.com>",
+        "email": "b913f13ef92ac157955c954ccaaff7be065faba4@arm.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Catalin Marinas <15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com>",
+        "email": "15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm64/include/asm/Kbuild",
+        "new_path": "arch/arm64/include/asm/Kbuild",
+        "old_sha1": "519f89f5b6a3de345e05ee79a9d1b66116131e77",
+        "new_sha1": "d0ff25de67cade78ed5ad9309c58135494b53f48",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/arm64/include/asm/percpu.h",
+        "new_path": "arch/arm64/include/asm/percpu.h",
+        "old_sha1": null,
+        "new_sha1": "13fb0b3efc5f7206bb8e187ea07ff6c3337ff2be",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm64/kernel/setup.c",
+        "new_path": "arch/arm64/kernel/setup.c",
+        "old_sha1": "bd9bbd0e44edf176c262cfad0e32b9f62599d4b7",
+        "new_sha1": "97d90840a7fd37602df78eb16ade4f71e090d7c5",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm64/kernel/smp.c",
+        "new_path": "arch/arm64/kernel/smp.c",
+        "old_sha1": "a0c2ca602cf85bebc6e7996454adb9e47fe9456d",
+        "new_sha1": "b5d2031c12c6185d5b668f2f0c04ff7df9c8837c",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  },
+  {
+    "commit": "9732cafd9dc0206479be919baf0067239f0a63ca",
+    "tree": "c8878035ac9cb6dce592957f12dc1723a583989d",
+    "parent": [
+      "f3c003f72dfb2497056bcbb864885837a1968ed5"
+    ],
+    "author": {
+      "name": "Jiang Liu",
+      "email": "c745fa7b96fe79db6d669643d5feb03ff0641332@gmail.com",
+      "time_sec": "1389104233",
+      "tz_offset": "480",
+      "date": "2014-01-07 14:17:13.000 UTC"
+    },
+    "committer": {
+      "name": "Catalin Marinas",
+      "email": "15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com",
+      "time_sec": "1389194633",
+      "tz_offset": "0",
+      "date": "2014-01-08 15:23:53.000 UTC"
+    },
+    "subject": "arm64, jump label: optimize jump label implementation",
+    "message": "arm64, jump label: optimize jump label implementation\n\nOptimize jump label implementation for ARM64 by dynamically patching\nkernel text.\n\nReviewed-by: Will Deacon <b913f13ef92ac157955c954ccaaff7be065faba4@arm.com>\nSigned-off-by: Jiang Liu <c745fa7b96fe79db6d669643d5feb03ff0641332@gmail.com>\nSigned-off-by: Catalin Marinas <15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com>\n",
+    "trailer": [
+      {
+        "key": "Reviewed-by",
+        "value": "Will Deacon <b913f13ef92ac157955c954ccaaff7be065faba4@arm.com>",
+        "email": "b913f13ef92ac157955c954ccaaff7be065faba4@arm.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Jiang Liu <c745fa7b96fe79db6d669643d5feb03ff0641332@gmail.com>",
+        "email": "c745fa7b96fe79db6d669643d5feb03ff0641332@gmail.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Catalin Marinas <15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com>",
+        "email": "15ce75b290ebaf27c3f9fd73ab848685ed3d8261@arm.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm64/Kconfig",
+        "new_path": "arch/arm64/Kconfig",
+        "old_sha1": "249acb9da4e3560a10731ac217402014175ba73c",
+        "new_sha1": "dd4327f09ba45b9eb42462e073bea74422d7cde7",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/arm64/include/asm/jump_label.h",
+        "new_path": "arch/arm64/include/asm/jump_label.h",
+        "old_sha1": null,
+        "new_sha1": "076a1c714049ffede6cf8fb3d46c6efcf3ac7f1f",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm64/kernel/Makefile",
+        "new_path": "arch/arm64/kernel/Makefile",
+        "old_sha1": "1ea7221f885303d81acca60a0cff8d97c2f7cdce",
+        "new_sha1": "2d4554b134100acbb6dab937326bdabcb12cd73e",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/arm64/kernel/jump_label.c",
+        "new_path": "arch/arm64/kernel/jump_label.c",
+        "old_sha1": null,
+        "new_sha1": "263a166291fbd96691c01f5d81554b4471d13d79",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "4702abd3f9728893ad5b0f4389e1902588510459",
+    "tree": "32926e7c55ef585d9b9c174a0e5f9ed13ed6bf7e",
+    "parent": [
+      "ddf28352b80c86754a6424e3a61e8bdf9213b3c7"
+    ],
+    "author": {
+      "name": "Nicolas Pitre",
+      "email": "408789a210b05fb3b46935e815320d62ba00a06e@linaro.org",
+      "time_sec": "1312383038",
+      "tz_offset": "60",
+      "date": "2011-08-03 14:50:38.000 UTC"
+    },
+    "committer": {
+      "name": "Arnd Bergmann",
+      "email": "f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de",
+      "time_sec": "1316700168",
+      "tz_offset": "0",
+      "date": "2011-09-22 14:02:48.000 UTC"
+    },
+    "subject": "ARM: mach-nuc93x: delete",
+    "message": "ARM: mach-nuc93x: delete\n\nThis architecture received only generic maintenance since December 2009\nwhen it was originally submitted, and no actual additional support since\nthen.  It has no defconfig entry either, meaning that it was never built\nby the ARM KAutobuild.  Incidentally it currently doesn't build either\nwhen CONFIG_MACH_NUC932EVB is selected which is the only possible config\nchoice.\n\nThis is therefore dead code and should be removed.  If someone wants to\nrevive this code, it could be retrieved from the Git repository, and\nideally be merged in mach-w90x900/ instead.\n\nSigned-off-by: Nicolas Pitre <408789a210b05fb3b46935e815320d62ba00a06e@linaro.org>\nCc: Wan ZongShun <7d90017055ae88f9b614c1a99b7a29176cffa725@gmail.com>\nSigned-off-by: Arnd Bergmann <f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Nicolas Pitre <408789a210b05fb3b46935e815320d62ba00a06e@linaro.org>",
+        "email": "408789a210b05fb3b46935e815320d62ba00a06e@linaro.org"
+      },
+      {
+        "key": "Cc",
+        "value": "Wan ZongShun <7d90017055ae88f9b614c1a99b7a29176cffa725@gmail.com>",
+        "email": "7d90017055ae88f9b614c1a99b7a29176cffa725@gmail.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Arnd Bergmann <f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de>",
+        "email": "f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/Kconfig",
+        "new_path": "arch/arm/Kconfig",
+        "old_sha1": "3269576dbfa8dab12d6531996e2e86de2ca309c1",
+        "new_sha1": "970055b7584061ec8e9e06a1748ce4290aea3c67",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/Makefile",
+        "new_path": "arch/arm/Makefile",
+        "old_sha1": "70c424eaf7b0d84db6af6431279a835ba71094c2",
+        "new_sha1": "eb3d9eb6112ab44fed7dc764b8607b8f907bb2d1",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/Kconfig",
+        "new_path": "arch/arm/mach-nuc93x/Kconfig",
+        "old_sha1": "2bc40a280fad5b1732074fe733740fa91b8c75bd",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/Makefile",
+        "new_path": "arch/arm/mach-nuc93x/Makefile",
+        "old_sha1": "440e2dec6c8a20bdc2a4a42a333944f81c340667",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/Makefile.boot",
+        "new_path": "arch/arm/mach-nuc93x/Makefile.boot",
+        "old_sha1": "a057b546b6e5fa4b3887c2b2a723ff814a5424c3",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/clock.c",
+        "new_path": "arch/arm/mach-nuc93x/clock.c",
+        "old_sha1": "0521efbc48c95bca3bcc0700330c637723a4c192",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/clock.h",
+        "new_path": "arch/arm/mach-nuc93x/clock.h",
+        "old_sha1": "4de1f1da9dc52d43c2898cbfa1d1d5a38efc382f",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/cpu.c",
+        "new_path": "arch/arm/mach-nuc93x/cpu.c",
+        "old_sha1": "f6ff5d87354c892369f28c468fe5e6ec6d0a4be2",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/cpu.h",
+        "new_path": "arch/arm/mach-nuc93x/cpu.h",
+        "old_sha1": "9def28197bc9257017fd44ab59bdae47efe82b99",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/dev.c",
+        "new_path": "arch/arm/mach-nuc93x/dev.c",
+        "old_sha1": "a962ae9578d682d61010270238f463d1fd1ef8a9",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/entry-macro.S",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/entry-macro.S",
+        "old_sha1": "1352cbda3797ebe000508b1a804a2127f9205ce9",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/hardware.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/hardware.h",
+        "old_sha1": "fb5c6fcb142e40691b201d04e01b4efc10e0df2e",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/io.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/io.h",
+        "old_sha1": "72e5051c753492273985c77cbfba3acc11a719e8",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/irqs.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/irqs.h",
+        "old_sha1": "7c4aa71edb44da90f23efdf01031f6c772193d36",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/map.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/map.h",
+        "old_sha1": "fd0b5e89f0e7cf189dea12e67b4e30722d7e1c25",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/memory.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/memory.h",
+        "old_sha1": "ef9864b002a65a425454b1a39075de70164f02b0",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/regs-clock.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/regs-clock.h",
+        "old_sha1": "5cb2954fbec2bc27f314361ee3a75f4b75675d0a",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/regs-ebi.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/regs-ebi.h",
+        "old_sha1": "3c72550e28e4e0d7ee3ee0b156a918dbd0f96269",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/regs-irq.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/regs-irq.h",
+        "old_sha1": "23021592de51d57eac12529a356920fc13aecfc3",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/regs-serial.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/regs-serial.h",
+        "old_sha1": "767a047a8bc27f43f9e9c193fcb0c367202e21e2",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/regs-timer.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/regs-timer.h",
+        "old_sha1": "394be9614d36dad076fb403e39f55adfab1a8c16",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/system.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/system.h",
+        "old_sha1": "d26bd9a52844c1dd07d55b31079577ccc07265f1",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/timex.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/timex.h",
+        "old_sha1": "0c719cc91aa906c82db9b3f04ce8d00577d7bc09",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/uncompress.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/uncompress.h",
+        "old_sha1": "381cb9baadd51c72f957b597bd3c0b36b14633ba",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/include/mach/vmalloc.h",
+        "new_path": "arch/arm/mach-nuc93x/include/mach/vmalloc.h",
+        "old_sha1": "7d11a5f07696c450366a228441ccdce86c148d20",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/irq.c",
+        "new_path": "arch/arm/mach-nuc93x/irq.c",
+        "old_sha1": "aa279f23e342af3437b8a5af84f2dcbe5c83fc0b",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/mach-nuc932evb.c",
+        "new_path": "arch/arm/mach-nuc93x/mach-nuc932evb.c",
+        "old_sha1": "d702570424809fce752734e4f503881c818d5ba8",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/nuc932.c",
+        "new_path": "arch/arm/mach-nuc93x/nuc932.c",
+        "old_sha1": "3966ead686fc4326526553f44c77c2e0a8a507a4",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/nuc932.h",
+        "new_path": "arch/arm/mach-nuc93x/nuc932.h",
+        "old_sha1": "9a66edd5338f0415f2ae56c4efaf9220782c82ad",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-nuc93x/time.c",
+        "new_path": "arch/arm/mach-nuc93x/time.c",
+        "old_sha1": "2f90f9dc6e300d698e1e7f0b9409565bc13021b7",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "57bd4b91a6cfc5bad4c5d829ef85293ea63643ea",
+    "tree": "2ffc2066eb7638e185663e9d849663403229d4e5",
+    "parent": [
+      "f74c95c20bad8e183e41283475f68a3e7b247af4"
+    ],
+    "author": {
+      "name": "Ben Dooks",
+      "email": "1177f64998f284a7348354b8e91cbbe575d9858a@fluff.org",
+      "time_sec": "1225361677",
+      "tz_offset": "0",
+      "date": "2008-10-30 10:14:37.000 UTC"
+    },
+    "committer": {
+      "name": "Ben Dooks",
+      "email": "1177f64998f284a7348354b8e91cbbe575d9858a@fluff.org",
+      "time_sec": "1225361835",
+      "tz_offset": "0",
+      "date": "2008-10-30 10:17:15.000 UTC"
+    },
+    "subject": "[ARM] S3C24XX: Movev udc headers to arch/arm/plat-s3c24xx/include/plat",
+    "message": "[ARM] S3C24XX: Movev udc headers to arch/arm/plat-s3c24xx/include/plat\n\nMove the udc headers to the proper home in\narch/arm/plat-s3c24xx/include/plat ready to clean out\nthe old include directories.\n\nSigned-off-by: Ben Dooks <1177f64998f284a7348354b8e91cbbe575d9858a@fluff.org>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Ben Dooks <1177f64998f284a7348354b8e91cbbe575d9858a@fluff.org>",
+        "email": "1177f64998f284a7348354b8e91cbbe575d9858a@fluff.org"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-s3c2410/mach-h1940.c",
+        "new_path": "arch/arm/mach-s3c2410/mach-h1940.c",
+        "old_sha1": "98716d0108e9d670747c56b45598fb78253961b2",
+        "new_sha1": "32d550fcff4dbbc5b45dad7e3c3b6d74449a8a01",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-s3c2410/mach-n30.c",
+        "new_path": "arch/arm/mach-s3c2410/mach-n30.c",
+        "old_sha1": "836c9f6392154a3935cf835725ef4531de2930a3",
+        "new_sha1": "7a7c45d28fe75ad01e7cd24b19c9674a9a692a31",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-s3c2410/mach-qt2410.c",
+        "new_path": "arch/arm/mach-s3c2410/mach-qt2410.c",
+        "old_sha1": "315c27271f1803dc80ccd6995e4cb83d664d4c59",
+        "new_sha1": "ef868472f6a4b02cf3b00fd3da0d3478e65fb369",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-s3c2412/mach-jive.c",
+        "new_path": "arch/arm/mach-s3c2412/mach-jive.c",
+        "old_sha1": "c8d9a346b3bf638e77ec64f1161df07eeefdd524",
+        "new_sha1": "25ff1ec9f8ad5f3874adcc856c933e7ead324a1c",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-s3c2412/mach-smdk2413.c",
+        "new_path": "arch/arm/mach-s3c2412/mach-smdk2413.c",
+        "old_sha1": "c719b5a740a914cc2a5d75e8f9bec7d02b2fb3e5",
+        "new_sha1": "8fd17b8d56799284c98e59b3d7efb283f747b4bc",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/plat-s3c24xx/devs.c",
+        "new_path": "arch/arm/plat-s3c24xx/devs.c",
+        "old_sha1": "e93f8bf6d3386659e175e1248adfea8178982bf4",
+        "new_sha1": "07491bcd13ba96ae362a1167fb04b85e065ba2df",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/arm/plat-s3c24xx/include/plat/regs-udc.h",
+        "new_path": "arch/arm/plat-s3c24xx/include/plat/regs-udc.h",
+        "old_sha1": null,
+        "new_sha1": "f0dd4a41b37babecba444871b7222059eef61762",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/arm/plat-s3c24xx/include/plat/udc.h",
+        "new_path": "arch/arm/plat-s3c24xx/include/plat/udc.h",
+        "old_sha1": null,
+        "new_sha1": "546bb4008f49cf240fc21351c7d25a4f06fbe5a4",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/usb/gadget/s3c2410_udc.c",
+        "new_path": "drivers/usb/gadget/s3c2410_udc.c",
+        "old_sha1": "00ba06b4475204012498cfdd5028ce03556be948",
+        "new_sha1": "8d8d651659836d3a9cc5fbef228effc78e994179",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "include/asm-arm/plat-s3c24xx/regs-udc.h",
+        "new_path": "include/asm-arm/plat-s3c24xx/regs-udc.h",
+        "old_sha1": "f0dd4a41b37babecba444871b7222059eef61762",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "include/asm-arm/plat-s3c24xx/udc.h",
+        "new_path": "include/asm-arm/plat-s3c24xx/udc.h",
+        "old_sha1": "546bb4008f49cf240fc21351c7d25a4f06fbe5a4",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  },
+  {
+    "commit": "95f42b3911fc3af2a4d4d8af966583122a94e42c",
+    "tree": "1f573aaf2a6b13f4a74c66b5b27040a943ae1739",
+    "parent": [
+      "1b3ba68884d192f42fcf4352e1ac7174facc96af"
+    ],
+    "author": {
+      "name": "Ben Dooks",
+      "email": "1177f64998f284a7348354b8e91cbbe575d9858a@fluff.org",
+      "time_sec": "1224594387",
+      "tz_offset": "60",
+      "date": "2008-10-21 13:06:27.000 UTC"
+    },
+    "committer": {
+      "name": "Ben Dooks",
+      "email": "1177f64998f284a7348354b8e91cbbe575d9858a@fluff.org",
+      "time_sec": "1229377550",
+      "tz_offset": "0",
+      "date": "2008-12-15 21:45:50.000 UTC"
+    },
+    "subject": "[ARM] S3C: Make <mach/timex.h> common",
+    "message": "[ARM] S3C: Make <mach/timex.h> common\n\nMove <mach/timex.h> to arch/arm/plat-s3c/include/mach/timex.h\nso it can be the default for all S3C based architectures.\n\nSigned-off-by: Ben Dooks <1177f64998f284a7348354b8e91cbbe575d9858a@fluff.org>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Ben Dooks <1177f64998f284a7348354b8e91cbbe575d9858a@fluff.org>",
+        "email": "1177f64998f284a7348354b8e91cbbe575d9858a@fluff.org"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-s3c2410/include/mach/timex.h",
+        "new_path": "arch/arm/mach-s3c2410/include/mach/timex.h",
+        "old_sha1": "2a425ed0a7e0a68aed3fad05376c94b3e82d8d1b",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/arm/plat-s3c/include/mach/timex.h",
+        "new_path": "arch/arm/plat-s3c/include/mach/timex.h",
+        "old_sha1": null,
+        "new_sha1": "2a425ed0a7e0a68aed3fad05376c94b3e82d8d1b",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "99ccbd229cf7453206bc858e795ec1f0345ff258",
+    "tree": "343ab082d154d7c970d90bf44c9887fdb0251cdb",
+    "parent": [
+      "cd0a2df681ec2af45f50c555c2a39dc92a4dff71"
+    ],
+    "author": {
+      "name": "Milosz Tanski",
+      "email": "ee5ae273a7b7b58e18e64b2b8af0da2a3015a58e@adfin.com",
+      "time_sec": "1377120594",
+      "tz_offset": "-240",
+      "date": "2013-08-21 21:29:54.000 UTC"
+    },
+    "committer": {
+      "name": "Milosz Tanski",
+      "email": "ee5ae273a7b7b58e18e64b2b8af0da2a3015a58e@adfin.com",
+      "time_sec": "1378486211",
+      "tz_offset": "0",
+      "date": "2013-09-06 16:50:11.000 UTC"
+    },
+    "subject": "ceph: use fscache as a local presisent cache",
+    "message": "ceph: use fscache as a local presisent cache\n\nAdding support for fscache to the Ceph filesystem. This would bring it to on\npar with some of the other network filesystems in Linux (like NFS, AFS, etc...)\n\nIn order to mount the filesystem with fscache the 'fsc' mount option must be\npassed.\n\nSigned-off-by: Milosz Tanski <ee5ae273a7b7b58e18e64b2b8af0da2a3015a58e@adfin.com>\nSigned-off-by: Sage Weil <6dd34506bbd5e58221bbb3e4732d97c91f02277b@inktank.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Milosz Tanski <ee5ae273a7b7b58e18e64b2b8af0da2a3015a58e@adfin.com>",
+        "email": "ee5ae273a7b7b58e18e64b2b8af0da2a3015a58e@adfin.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Sage Weil <6dd34506bbd5e58221bbb3e4732d97c91f02277b@inktank.com>",
+        "email": "6dd34506bbd5e58221bbb3e4732d97c91f02277b@inktank.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/ceph/Kconfig",
+        "new_path": "fs/ceph/Kconfig",
+        "old_sha1": "49bc78243db9f2f3f147de0bcc0e3c4f7f72fd66",
+        "new_sha1": "ac9a2ef5bb9b8f0e8638c0d594e1cd51b5719c91",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/ceph/Makefile",
+        "new_path": "fs/ceph/Makefile",
+        "old_sha1": "bd352125e829827246d5591d1a485e3b4e52f17b",
+        "new_sha1": "32e30106a2f01e8bf62138981e1c4b678a509cfc",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/ceph/addr.c",
+        "new_path": "fs/ceph/addr.c",
+        "old_sha1": "3bed7da383263a3ba967c6158b2ff6bd1bf5c4af",
+        "new_sha1": "3a21a7cbc21c7227d41f06a962f4c572644266b0",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "fs/ceph/cache.c",
+        "new_path": "fs/ceph/cache.c",
+        "old_sha1": null,
+        "new_sha1": "5c413ecf1f15a37a469296a75a647e5854b4e0e7",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "fs/ceph/cache.h",
+        "new_path": "fs/ceph/cache.h",
+        "old_sha1": null,
+        "new_sha1": "0ea95cb7f389c94ba6b9e7c6a45334c59673cd75",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/ceph/caps.c",
+        "new_path": "fs/ceph/caps.c",
+        "old_sha1": "5a26bc1dd799adc45a75f0b477c25a84c19844bb",
+        "new_sha1": "7b451eb7d123ce36d353118938b5ecd60456f720",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/ceph/file.c",
+        "new_path": "fs/ceph/file.c",
+        "old_sha1": "20d0222c2e76b892d933a841d26ed6912d4c84f9",
+        "new_sha1": "3de89829e2a162ab6bce2a58296b25aef9235c43",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/ceph/inode.c",
+        "new_path": "fs/ceph/inode.c",
+        "old_sha1": "602ccd8e06b7a595f1bfe11e0646b2d5b7947d34",
+        "new_sha1": "eae41cd732760543f458831a27c3b3a0c1d50a32",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/ceph/super.c",
+        "new_path": "fs/ceph/super.c",
+        "old_sha1": "6627b26a800ca0e74649ecf439076bb9c6a4b095",
+        "new_sha1": "6a0951e4304441a241ca8fe550aba36cc097c271",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/ceph/super.h",
+        "new_path": "fs/ceph/super.h",
+        "old_sha1": "f1e4e4766ea2d8cabf6126cd59a98f4568517895",
+        "new_sha1": "bb23ef6361778d8c8635b965098c065979ef318b",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "87aec56e27efac98b7a0abe93258687716bf0b1e",
+    "tree": "eb73a4e2e2912212fa5321f0cea850b4790d72a9",
+    "parent": [
+      "380f6ff5495e8008775078e62e748c7e8f099270"
+    ],
+    "author": {
+      "name": "Andrew F. Davis",
+      "email": "a6dfde0ec5c5124d26ab0cb4f9ab9a758dee1d6f@ti.com",
+      "time_sec": "1454435444",
+      "tz_offset": "-360",
+      "date": "2016-02-02 17:50:44.000 UTC"
+    },
+    "committer": {
+      "name": "Jonathan Cameron",
+      "email": "09f65b71b7655725897b2fd41a09a0cefe2e1ace@kernel.org",
+      "time_sec": "1454785029",
+      "tz_offset": "0",
+      "date": "2016-02-06 18:57:09.000 UTC"
+    },
+    "subject": "iio: health: Add driver for the TI AFE4404 heart monitor",
+    "message": "iio: health: Add driver for the TI AFE4404 heart monitor\n\nAdd driver for the TI AFE4404 heart rate monitor and pulse oximeter.\nThis device detects reflected LED light fluctuations and presents an ADC\nvalue to the user space for further signal processing.\n\nDatasheet: http://www.ti.com/product/AFE4404/datasheet\n\nSigned-off-by: Andrew F. Davis <a6dfde0ec5c5124d26ab0cb4f9ab9a758dee1d6f@ti.com>\nSigned-off-by: Jonathan Cameron <09f65b71b7655725897b2fd41a09a0cefe2e1ace@kernel.org>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Andrew F. Davis <a6dfde0ec5c5124d26ab0cb4f9ab9a758dee1d6f@ti.com>",
+        "email": "a6dfde0ec5c5124d26ab0cb4f9ab9a758dee1d6f@ti.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Jonathan Cameron <09f65b71b7655725897b2fd41a09a0cefe2e1ace@kernel.org>",
+        "email": "09f65b71b7655725897b2fd41a09a0cefe2e1ace@kernel.org"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "Documentation/ABI/testing/sysfs-bus-iio-health-afe440x",
+        "new_path": "Documentation/ABI/testing/sysfs-bus-iio-health-afe440x",
+        "old_sha1": null,
+        "new_sha1": "3740f253d406975ca7a6d13ebb96acd2cfc5d8f8",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/health/Kconfig",
+        "new_path": "drivers/iio/health/Kconfig",
+        "old_sha1": "a647679da805c9c4889c874de9cd59d2e55c1549",
+        "new_sha1": "632a14b7dd6fe667fd67704365806251270ad288",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/health/Makefile",
+        "new_path": "drivers/iio/health/Makefile",
+        "old_sha1": "7c475d7faad8fd9ce00f2d82ce691646df9dda02",
+        "new_sha1": "b37c0d5e07b89132a81b2a343ffdd0dd4e237a62",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "drivers/iio/health/afe4404.c",
+        "new_path": "drivers/iio/health/afe4404.c",
+        "old_sha1": null,
+        "new_sha1": "0759268f37e0da9c83fa939eaa376120b7c589b0",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "drivers/iio/health/afe440x.h",
+        "new_path": "drivers/iio/health/afe440x.h",
+        "old_sha1": null,
+        "new_sha1": "c671ab78a23ac6109b57fcc19a7925e7563149d1",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "84b36ce5f79c01f792c623f14e92ed86cdccb42f",
+    "tree": "aa763089df10007bc42aa02b747e652e0b99003e",
+    "parent": [
+      "4eb3ccf157639a9d9c7829de94017c46c73d9cc4"
+    ],
+    "author": {
+      "name": "Jonathan Cameron",
+      "email": "09f65b71b7655725897b2fd41a09a0cefe2e1ace@kernel.org",
+      "time_sec": "1341083160",
+      "tz_offset": "60",
+      "date": "2012-06-30 19:06:00.000 UTC"
+    },
+    "committer": {
+      "name": "Jonathan Cameron",
+      "email": "09f65b71b7655725897b2fd41a09a0cefe2e1ace@kernel.org",
+      "time_sec": "1352542641",
+      "tz_offset": "0",
+      "date": "2012-11-10 10:17:21.000 UTC"
+    },
+    "subject": "staging:iio: Add support for multiple buffers",
+    "message": "staging:iio: Add support for multiple buffers\n\nRoute all buffer writes through the demux.\nAddition or removal of a buffer results in tear down and\nsetup of all the buffers for a given device.\n\nSigned-off-by: Jonathan Cameron <09f65b71b7655725897b2fd41a09a0cefe2e1ace@kernel.org>\nTested-by: srinivas pandruvada <910e550f1c830a1d246b6c3ed4d6ca559ba95c19@intel.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Jonathan Cameron <09f65b71b7655725897b2fd41a09a0cefe2e1ace@kernel.org>",
+        "email": "09f65b71b7655725897b2fd41a09a0cefe2e1ace@kernel.org"
+      },
+      {
+        "key": "Tested-by",
+        "value": "srinivas pandruvada <910e550f1c830a1d246b6c3ed4d6ca559ba95c19@intel.com>",
+        "email": "910e550f1c830a1d246b6c3ed4d6ca559ba95c19@intel.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/accel/hid-sensor-accel-3d.c",
+        "new_path": "drivers/iio/accel/hid-sensor-accel-3d.c",
+        "old_sha1": "314a4057879e6dc3e785a54f0baa1b7459d30f9e",
+        "new_sha1": "a95cda0e387f6c2781fa663bd020211693671d57",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/adc/ad7266.c",
+        "new_path": "drivers/iio/adc/ad7266.c",
+        "old_sha1": "b11f214779a2def29323c938c7dca736b99e087f",
+        "new_sha1": "a6f4fc5f8201a414f653d86db92b7ef03a9c1705",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/adc/ad7476.c",
+        "new_path": "drivers/iio/adc/ad7476.c",
+        "old_sha1": "7f2f45a0a48d086e62963af5a9f95de5bcf697b2",
+        "new_sha1": "330248bfebaecffdf8b042738f64ff134a8a73f8",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/adc/ad7887.c",
+        "new_path": "drivers/iio/adc/ad7887.c",
+        "old_sha1": "fd62309b4d3d23217ea7d165dba897f033b3c9b3",
+        "new_sha1": "81153fafac7a928fa4f15cff0ba8dee55da026ec",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/adc/ad_sigma_delta.c",
+        "new_path": "drivers/iio/adc/ad_sigma_delta.c",
+        "old_sha1": "67baa1363d7a026f5bdd48ed3fe4f72115ef5e7e",
+        "new_sha1": "afe6d78c8ff0f6cf4dcb54727e2999749010bdba",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/adc/at91_adc.c",
+        "new_path": "drivers/iio/adc/at91_adc.c",
+        "old_sha1": "2e2c9a80aa37c1eff8e124a1b09bb3e778107054",
+        "new_sha1": "03b85940f4ba373ac9f2e907418e513d9374b264",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/gyro/hid-sensor-gyro-3d.c",
+        "new_path": "drivers/iio/gyro/hid-sensor-gyro-3d.c",
+        "old_sha1": "4c56ada51c3958343df1e56913a0b3ca56cf1be6",
+        "new_sha1": "02ef989b830d2d897ba580c8cc3c3305b06ba31b",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/industrialio-buffer.c",
+        "new_path": "drivers/iio/industrialio-buffer.c",
+        "old_sha1": "722a83fd8d85a4b2bb8bd4fde7fc315627e43d5f",
+        "new_sha1": "aaadd32f9f0d4da915d96c37fb33b52c6ef0febe",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/industrialio-core.c",
+        "new_path": "drivers/iio/industrialio-core.c",
+        "old_sha1": "cd700368eed064e3fadb0da8c0e0dc9a2d99be2c",
+        "new_sha1": "060a4045be85e00536f9a018524bcf03b3b72af6",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/light/adjd_s311.c",
+        "new_path": "drivers/iio/light/adjd_s311.c",
+        "old_sha1": "164b62b91a4bbded4ee56bb8db645ad9b75e0ba9",
+        "new_sha1": "36d210a06b28feb3284e67031ee60455b23b394b",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/light/hid-sensor-als.c",
+        "new_path": "drivers/iio/light/hid-sensor-als.c",
+        "old_sha1": "96e3691e42c4970727f8240df40e8779aa9b0bd0",
+        "new_sha1": "8e1f69844eea796da357ac67aded7959a7c70557",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/iio/magnetometer/hid-sensor-magn-3d.c",
+        "new_path": "drivers/iio/magnetometer/hid-sensor-magn-3d.c",
+        "old_sha1": "c4f0d274f577471b15fe0d5e8d3f60b3c63292fe",
+        "new_sha1": "d1b5fb74b9bf1b92091287223f2cd0e8a28e5882",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/accel/adis16201_ring.c",
+        "new_path": "drivers/staging/iio/accel/adis16201_ring.c",
+        "old_sha1": "97c09f0c26aea3c4fb21b42cbe6413c0516deb06",
+        "new_sha1": "e14ca60092a2fdf7e68a0be87439214d9ad9241c",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/accel/adis16203_ring.c",
+        "new_path": "drivers/staging/iio/accel/adis16203_ring.c",
+        "old_sha1": "7507e1a0459186f1b6e565704eecc8059821fde8",
+        "new_sha1": "eba2e285c84a8fc6f4748f52ea2563e66c40c185",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/accel/adis16204_ring.c",
+        "new_path": "drivers/staging/iio/accel/adis16204_ring.c",
+        "old_sha1": "4c976bec986b7beadb5faccfd8fcaed3be94a898",
+        "new_sha1": "3611a13836c9223d10ccc196f5213f0876fc8ce5",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/accel/adis16209_ring.c",
+        "new_path": "drivers/staging/iio/accel/adis16209_ring.c",
+        "old_sha1": "f939e29d6c82d515fa0157877d253a3fb6cf988a",
+        "new_sha1": "6af9a5dbc7097003582bfef3222bef4844494065",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/accel/adis16240_ring.c",
+        "new_path": "drivers/staging/iio/accel/adis16240_ring.c",
+        "old_sha1": "caff8e25e0a2557cd181ed1995e3e53639c5c8ee",
+        "new_sha1": "e2ac8a8c81071dc7c5d9091a4310d3a5023f3ec5",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/accel/lis3l02dq_ring.c",
+        "new_path": "drivers/staging/iio/accel/lis3l02dq_ring.c",
+        "old_sha1": "246352716537cf363cf456fd6dd802aa03e779b4",
+        "new_sha1": "bc38651c315e6ca49943d0ab118706e794e023c8",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/adc/ad7298_ring.c",
+        "new_path": "drivers/staging/iio/adc/ad7298_ring.c",
+        "old_sha1": "c2906a85fedb355791a2dd0bb2dbae42275f2fd3",
+        "new_sha1": "b3dd514b9627fc4f5a1c38ceea42dc3cdcde9387",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/adc/ad7606_ring.c",
+        "new_path": "drivers/staging/iio/adc/ad7606_ring.c",
+        "old_sha1": "ba04d0ffd4f49066aac2b04aa595ff88b16604ea",
+        "new_sha1": "2b25cb07fe41d1470513424380de4ab439657191",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/adc/ad799x_ring.c",
+        "new_path": "drivers/staging/iio/adc/ad799x_ring.c",
+        "old_sha1": "86026d9b20bc604e5acb8643891d7ed34d62d44a",
+        "new_sha1": "2c5f38475a8edfef700d924f110de25e35263fdd",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/adc/max1363_ring.c",
+        "new_path": "drivers/staging/iio/adc/max1363_ring.c",
+        "old_sha1": "5f74f3b7671af40c21bc6c3e14ca463eb41881c0",
+        "new_sha1": "688304bdbaf0815452765b3c75e11bfc6cfcf2a8",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/adc/mxs-lradc.c",
+        "new_path": "drivers/staging/iio/adc/mxs-lradc.c",
+        "old_sha1": "df5bba284b73055d3b821e7d86eade25749db86b",
+        "new_sha1": "3b467d8c588262d56dea61efbc1e08fc73853a2f",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/gyro/adis16260_ring.c",
+        "new_path": "drivers/staging/iio/gyro/adis16260_ring.c",
+        "old_sha1": "e294cb49736d05947a6024f909fc4d4af197d2e0",
+        "new_sha1": "d6c48f850a9e65e699d0c617da06c5adb749fd96",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/iio_simple_dummy_buffer.c",
+        "new_path": "drivers/staging/iio/iio_simple_dummy_buffer.c",
+        "old_sha1": "697d9700db2f698619145363dc4b8a591d67fad4",
+        "new_sha1": "dee16f0e7570bf1335479d3133a4d9d5007e4348",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/impedance-analyzer/ad5933.c",
+        "new_path": "drivers/staging/iio/impedance-analyzer/ad5933.c",
+        "old_sha1": "de21d47f33e91386969171eb024086659005bd06",
+        "new_sha1": "b1fef147d5b50ae617bee5abd555eb869d0580b9",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/imu/adis16400_ring.c",
+        "new_path": "drivers/staging/iio/imu/adis16400_ring.c",
+        "old_sha1": "260bdd1a468174e0f2572b8a5743b93d2519c56d",
+        "new_sha1": "d46c1e38cf7bd0df87c4d1b50ddd97f87a2a563e",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/iio/meter/ade7758_ring.c",
+        "new_path": "drivers/staging/iio/meter/ade7758_ring.c",
+        "old_sha1": "9e49baccf660eb4d303859fc8166df6817b2326e",
+        "new_sha1": "4552a4c7fe33b0d65d14d073abe5601781e9ff41",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "include/linux/iio/buffer.h",
+        "new_path": "include/linux/iio/buffer.h",
+        "old_sha1": "c629b3a1d9a95a22d81e7d7ed293fef5a43612e3",
+        "new_sha1": "0270405691803339f143879cd6a1a7eb1b933141",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "include/linux/iio/iio.h",
+        "new_path": "include/linux/iio/iio.h",
+        "old_sha1": "7806c24e5bc8173a004597a1dd266f8e14900de6",
+        "new_sha1": "adca93a999a747329ed0e3aaa497f9eea4a3cdd9",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "59aa56bf2a92e1df97d218937d5cd108927a5c46",
+    "tree": "b5706616cb4c675bf430942264a0c744d5d1653d",
+    "parent": [
+      "4478c407ea3810aad300ef8d4cee23b3d708461b"
+    ],
+    "author": {
+      "name": "Paul Gortmaker",
+      "email": "ae947f3c8df96e1dc851c5e3e5a930ce6d3f1f74@windriver.com",
+      "time_sec": "1456099564",
+      "tz_offset": "-300",
+      "date": "2016-02-22 00:06:04.000 UTC"
+    },
+    "committer": {
+      "name": "David Vrabel",
+      "email": "b9d45bd1f671e508cd8daa63dfc3cabb597562df@citrix.com",
+      "time_sec": "1458573212",
+      "tz_offset": "0",
+      "date": "2016-03-21 15:13:32.000 UTC"
+    },
+    "subject": "xen: audit usages of module.h ; remove unnecessary instances",
+    "message": "xen: audit usages of module.h ; remove unnecessary instances\n\nCode that uses no modular facilities whatsoever should not be\nsourcing module.h at all, since that header drags in a bunch\nof other headers with it.\n\nSimilarly, code that is not explicitly using modular facilities\nlike module_init() but only is declaring module_param setup\nvariables should be using moduleparam.h and not the larger\nmodule.h file for that.\n\nIn making this change, we also uncover an implicit use of BUG()\nin inline fcns within arch/arm/include/asm/xen/hypercall.h so\nwe explicitly source <linux/bug.h> for that file now.\n\nSigned-off-by: Paul Gortmaker <ae947f3c8df96e1dc851c5e3e5a930ce6d3f1f74@windriver.com>\nReviewed-by: Stefano Stabellini <22a0c6385d750d07aa383c9f813cf6f0228657d8@eu.citrix.com>\nSigned-off-by: David Vrabel <b9d45bd1f671e508cd8daa63dfc3cabb597562df@citrix.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Paul Gortmaker <ae947f3c8df96e1dc851c5e3e5a930ce6d3f1f74@windriver.com>",
+        "email": "ae947f3c8df96e1dc851c5e3e5a930ce6d3f1f74@windriver.com"
+      },
+      {
+        "key": "Reviewed-by",
+        "value": "Stefano Stabellini <22a0c6385d750d07aa383c9f813cf6f0228657d8@eu.citrix.com>",
+        "email": "22a0c6385d750d07aa383c9f813cf6f0228657d8@eu.citrix.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "David Vrabel <b9d45bd1f671e508cd8daa63dfc3cabb597562df@citrix.com>",
+        "email": "b9d45bd1f671e508cd8daa63dfc3cabb597562df@citrix.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/include/asm/xen/hypercall.h",
+        "new_path": "arch/arm/include/asm/xen/hypercall.h",
+        "old_sha1": "d769972db8cbe49b232c3ac81ff10c8a958a5eee",
+        "new_sha1": "b6b962d70db980380b526feca2370d352d26a6dc",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/xen/events/events_2l.c",
+        "new_path": "drivers/xen/events/events_2l.c",
+        "old_sha1": "7dd46312c18023c6e9ca6db16fba107c79a9bb84",
+        "new_sha1": "51b488f5bfe95ec4951a6dd72293c4121340d5f8",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/xen/events/events_base.c",
+        "new_path": "drivers/xen/events/events_base.c",
+        "old_sha1": "524c22146429d7c87acc8682976031c2f8a727d6",
+        "new_sha1": "488017a0806a237d6bd44f330be055059e5141cb",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/xen/events/events_fifo.c",
+        "new_path": "drivers/xen/events/events_fifo.c",
+        "old_sha1": "eff2b88003d930c2085b33820e970d55c1008b9c",
+        "new_sha1": "9289a17712e24bc51c1e6363aed1f0d5181d8642",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/xen/features.c",
+        "new_path": "drivers/xen/features.c",
+        "old_sha1": "99eda169c77967ff72ca23ba25ac6026102ea18f",
+        "new_sha1": "d7d34fdfc9938d490fa1345bb5efc1b535f4d204",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/xen/grant-table.c",
+        "new_path": "drivers/xen/grant-table.c",
+        "old_sha1": "effbaf91791f4d5ab7a8e0b9d195901f539a7c91",
+        "new_sha1": "bb36b1e1dbcc68fd31490079fcb4e1feee0b70d7",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/xen/xen-pciback/conf_space.c",
+        "new_path": "drivers/xen/xen-pciback/conf_space.c",
+        "old_sha1": "9c234209d8b52d44d6483397f33a190fa2899c90",
+        "new_sha1": "8e67336f8ddd238d7763a118bb460327ba3278f7",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/xen/xen-pciback/pciback_ops.c",
+        "new_path": "drivers/xen/xen-pciback/pciback_ops.c",
+        "old_sha1": "73dafdc494aa8322e037f1d4a9ad4ec5530c5743",
+        "new_sha1": "5ad01f9c24fcbce6bb27b43586fd0f282c24d848",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/xen/xen-pciback/xenbus.c",
+        "new_path": "drivers/xen/xen-pciback/xenbus.c",
+        "old_sha1": "4843741e703a336da72162af91165392f0560490",
+        "new_sha1": "c252eb3f01767a4cb3ed906b884306cd3d83b20a",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/xen/xen-selfballoon.c",
+        "new_path": "drivers/xen/xen-selfballoon.c",
+        "old_sha1": "3b2bffde534f42b04a635ab46514f4cc52f0a1a5",
+        "new_sha1": "53a085fca00c0bd32f7f022c62c00588a906140e",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/xen/xenbus/xenbus_xs.c",
+        "new_path": "drivers/xen/xenbus/xenbus_xs.c",
+        "old_sha1": "ba804f3d8278d945934fd2750f2f6345302fd5cc",
+        "new_sha1": "374b12af88127c2aef2f359ef3f13013ec548fd1",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/xen/xenfs/xensyms.c",
+        "new_path": "drivers/xen/xenfs/xensyms.c",
+        "old_sha1": "a03f261b12d8956ecf83ac1dad19c9a957fe0c54",
+        "new_sha1": "c6e2b4a542ea80478c0d20df1d51eb2c426cbb26",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "5d1190ea69cd158835518d4132b3d98774073092",
+    "tree": "749d7c43d917a47391420e15a189e0e15f513d18",
+    "parent": [
+      "7d55490277cf9e725f73e0055344b3e3a846926b"
+    ],
+    "author": {
+      "name": "Thomas Petazzoni",
+      "email": "a5d87d2bd7c424ee5cbdb4e978635bf653d5a005@free-electrons.com",
+      "time_sec": "1363885158",
+      "tz_offset": "60",
+      "date": "2013-03-21 16:59:18.000 UTC"
+    },
+    "committer": {
+      "name": "Jason Cooper",
+      "email": "68c46a606457643eab92053c1c05574abb26f861@lakedaemon.net",
+      "time_sec": "1366034794",
+      "tz_offset": "0",
+      "date": "2013-04-15 14:06:34.000 UTC"
+    },
+    "subject": "arm: mach-orion5x: convert to use mvebu-mbus driver",
+    "message": "arm: mach-orion5x: convert to use mvebu-mbus driver\n\nThis commit migrates the mach-orion5x platforms to use the mvebu-mbus\ndriver and therefore removes the Orion5x-specific addr-map code.\n\nThe dove_init_early() function now initializes the mvebu-mbus driver\nby calling mvebu_mbus_init().\n\nWe also convert a number of orion5x_setup_xyz_win() calls to the\nappropriate mvebu_mbus_add_window() calls, as each board was doing its\nown setup for the NOR window or other devices. Ultimately, those\ndevices will be probed from the DT.\n\nThe common address decoding windows are now registered in the\norion5x_setup_wins() function. It is worth noting that the four PCIe\naddress decoding windows will ultimately no longer have to be\nregistered here: it will be done automatically by the PCIe driver once\nDove has been migrated to use the upcoming mvebu PCIe driver.\n\nSigned-off-by: Thomas Petazzoni <a5d87d2bd7c424ee5cbdb4e978635bf653d5a005@free-electrons.com>\nAcked-by: Arnd Bergmann <f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de>\nSigned-off-by: Jason Cooper <68c46a606457643eab92053c1c05574abb26f861@lakedaemon.net>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Thomas Petazzoni <a5d87d2bd7c424ee5cbdb4e978635bf653d5a005@free-electrons.com>",
+        "email": "a5d87d2bd7c424ee5cbdb4e978635bf653d5a005@free-electrons.com"
+      },
+      {
+        "key": "Acked-by",
+        "value": "Arnd Bergmann <f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de>",
+        "email": "f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Jason Cooper <68c46a606457643eab92053c1c05574abb26f861@lakedaemon.net>",
+        "email": "68c46a606457643eab92053c1c05574abb26f861@lakedaemon.net"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/Kconfig",
+        "new_path": "arch/arm/Kconfig",
+        "old_sha1": "6ee09663e929824809fb7647a9488ffb8166ead0",
+        "new_sha1": "b6f5f28ef007f09f694123af3e2a3fc5784c6c63",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/Makefile",
+        "new_path": "arch/arm/mach-orion5x/Makefile",
+        "old_sha1": "9e809a7c05c0c607b00433fc6a95047ac1365e7c",
+        "new_sha1": "45da805fb23692d07703310e8076a0cd8e4070f5",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-orion5x/addr-map.c",
+        "new_path": "arch/arm/mach-orion5x/addr-map.c",
+        "old_sha1": "b5efc0fd31cb265ff1b9c53072301422fb31a450",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/board-dt.c",
+        "new_path": "arch/arm/mach-orion5x/board-dt.c",
+        "old_sha1": "35a8014529ca7b45b68a769a59e8a8d11d3e0782",
+        "new_sha1": "6bbc8786c1e3f0e1ed3021c70148676e3f7301eb",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/common.c",
+        "new_path": "arch/arm/mach-orion5x/common.c",
+        "old_sha1": "d068f1431c402965004105c3ddb1018ec3b6d8ec",
+        "new_sha1": "8e468e3a60153a483d02a07219fa31ac1055a218",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/common.h",
+        "new_path": "arch/arm/mach-orion5x/common.h",
+        "old_sha1": "e60345760283a9263a10be96c3fa4fd54a7c9c91",
+        "new_sha1": "cdaa01f3d186f59a9b41fd7bff58853c957817ec",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/d2net-setup.c",
+        "new_path": "arch/arm/mach-orion5x/d2net-setup.c",
+        "old_sha1": "57d0af74874d0877a77dc0d4a44c4bebe56b7605",
+        "new_sha1": "16c88bbabc9814d2b9967efa3aab2becaa054604",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/db88f5281-setup.c",
+        "new_path": "arch/arm/mach-orion5x/db88f5281-setup.c",
+        "old_sha1": "76665640087b879f54ef5bbc150a95e3b7de923f",
+        "new_sha1": "4e1263da38bb2b2e21119ebfbff1b890fd3e8051",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/dns323-setup.c",
+        "new_path": "arch/arm/mach-orion5x/dns323-setup.c",
+        "old_sha1": "6eb1732757fd241132cbfea85e83f79272621c84",
+        "new_sha1": "9e6baf581ed3ef71e338c494931a0b5069ca722d",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/edmini_v2-setup.c",
+        "new_path": "arch/arm/mach-orion5x/edmini_v2-setup.c",
+        "old_sha1": "d675e727803d214f49320db72f5b059e54d076b2",
+        "new_sha1": "147615510dd0ccd29f1dd8d62626661dbfdd0476",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/include/mach/orion5x.h",
+        "new_path": "arch/arm/mach-orion5x/include/mach/orion5x.h",
+        "old_sha1": "d265f5484a8e6934a7a1105c196539d27e6d3b15",
+        "new_sha1": "b78ff324886888844ff8f6de83a4dfe5b63996da",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/kurobox_pro-setup.c",
+        "new_path": "arch/arm/mach-orion5x/kurobox_pro-setup.c",
+        "old_sha1": "b984035262180af2c072c7f8cca492c3baed97a0",
+        "new_sha1": "aae10e4a917cbd9e41f3a0370e0dece8ba7feed9",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/ls-chl-setup.c",
+        "new_path": "arch/arm/mach-orion5x/ls-chl-setup.c",
+        "old_sha1": "044da5b6a6ae6057efff262eed3e870716691b26",
+        "new_sha1": "24f4e14e58939b7453c689b93580fa33facd36f4",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/ls_hgl-setup.c",
+        "new_path": "arch/arm/mach-orion5x/ls_hgl-setup.c",
+        "old_sha1": "d49f93423f52feaeb2061542982ce0db477d7fa3",
+        "new_sha1": "fc653bb41e78f0889b5956b79db41e18d66f17bf",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/lsmini-setup.c",
+        "new_path": "arch/arm/mach-orion5x/lsmini-setup.c",
+        "old_sha1": "8e3965c6c0fe15fa96b615d55cc4c6e16aded6c3",
+        "new_sha1": "18e66e617dc297e02063710ff87366ec465dad3a",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/mss2-setup.c",
+        "new_path": "arch/arm/mach-orion5x/mss2-setup.c",
+        "old_sha1": "0ec94a1f2b16e2fe9a9ac34bd7964867c42a8e20",
+        "new_sha1": "827acbafc9dc2a3b841b869e5e35924d114ac632",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/mv2120-setup.c",
+        "new_path": "arch/arm/mach-orion5x/mv2120-setup.c",
+        "old_sha1": "18143f2a909398eb709066c7bba1a2d32261b575",
+        "new_sha1": "92600ae2b4b6e4992ff7f27311ecf9186a2b401b",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/net2big-setup.c",
+        "new_path": "arch/arm/mach-orion5x/net2big-setup.c",
+        "old_sha1": "282e503b003eb12c6ffd62b62ae4dd35cc09982c",
+        "new_sha1": "dd0641a0d074447a1c1934128a8a90564b4860da",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/pci.c",
+        "new_path": "arch/arm/mach-orion5x/pci.c",
+        "old_sha1": "973db98a3c277f4c89fec32a2f0c5250815abbc8",
+        "new_sha1": "503368023bb18ffdd1ba62f019a90adbe73c9522",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/rd88f5181l-fxo-setup.c",
+        "new_path": "arch/arm/mach-orion5x/rd88f5181l-fxo-setup.c",
+        "old_sha1": "d6e72f672afbf221a9066100a64b3d96107d9e5f",
+        "new_sha1": "1c4498bf650a6cbc8d109a18de761f58beb9acd0",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/rd88f5181l-ge-setup.c",
+        "new_path": "arch/arm/mach-orion5x/rd88f5181l-ge-setup.c",
+        "old_sha1": "c8b7913310e53b7f97ced2566fd0d4001512513f",
+        "new_sha1": "adabe34c4fc62b1ac02e9333b90128add8809c3b",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/rd88f5182-setup.c",
+        "new_path": "arch/arm/mach-orion5x/rd88f5182-setup.c",
+        "old_sha1": "f9e156725d7cf52e742972d90ba58776c57c7708",
+        "new_sha1": "66e77ec91532ba1e42189af393772c7a2248dc81",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/terastation_pro2-setup.c",
+        "new_path": "arch/arm/mach-orion5x/terastation_pro2-setup.c",
+        "old_sha1": "acc0877ec1c9848be42c2fceaf40a956532bb07c",
+        "new_sha1": "a0bfa53e75569e292785af06eca421d6073c70af",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/ts209-setup.c",
+        "new_path": "arch/arm/mach-orion5x/ts209-setup.c",
+        "old_sha1": "9c17f0c2b488616404472282be1d955dba515711",
+        "new_sha1": "80174f0f168e7ce6c9ca91d73175a064bcad8ed6",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/ts409-setup.c",
+        "new_path": "arch/arm/mach-orion5x/ts409-setup.c",
+        "old_sha1": "8cc5ab6c503e31f17f5f4b0bf9b9e8207d90657c",
+        "new_sha1": "92592790d6da2eb9048fc06523c13b80dcf2c1d5",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/wnr854t-setup.c",
+        "new_path": "arch/arm/mach-orion5x/wnr854t-setup.c",
+        "old_sha1": "66552ca7e05da68de13934ddaae342cd75622404",
+        "new_sha1": "6b84863c018d6c4f83440a26b5c7e4ca85977e4f",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-orion5x/wrt350n-v2-setup.c",
+        "new_path": "arch/arm/mach-orion5x/wrt350n-v2-setup.c",
+        "old_sha1": "2c5408e2e689431fdd40de391db45890f9821caa",
+        "new_sha1": "fae684bc54f2b51f81dcec16bc7ad31fe210fb0d",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/plat-orion/Makefile",
+        "new_path": "arch/arm/plat-orion/Makefile",
+        "old_sha1": "9fd843e1785bdf48d3cbe975b1bc2054ab4be98b",
+        "new_sha1": "09711cdc6817d625359edfd5110f5db345e1c118",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "af8d1c63afcbf36eea06789c92e22d4af118d2fb",
+    "tree": "44c51abb9f5a80b246b026743f5a9508fb896fc8",
+    "parent": [
+      "6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae"
+    ],
+    "author": {
+      "name": "Gregory CLEMENT",
+      "email": "cd8db494d8ed74d7c3f56ec5c769dff3d51dd397@free-electrons.com",
+      "time_sec": "1388671739",
+      "tz_offset": "60",
+      "date": "2014-01-02 14:08:59.000 UTC"
+    },
+    "committer": {
+      "name": "Jason Cooper",
+      "email": "68c46a606457643eab92053c1c05574abb26f861@lakedaemon.net",
+      "time_sec": "1389664756",
+      "tz_offset": "0",
+      "date": "2014-01-14 01:59:16.000 UTC"
+    },
+    "subject": "ARM: mvebu: Add support to get the ID and the revision of a SoC",
+    "message": "ARM: mvebu: Add support to get the ID and the revision of a SoC\n\nAll the mvebu SoCs have information related to their variant and\nrevision that can be read from the PCI control register.\n\nThis patch adds support for Armada XP and Armada 370. This reading of\nthe revision and the ID are done before the PCI initialization to\navoid any conflicts. Once these data are retrieved, the resources are\nfreed to let the PCI subsystem use it.\n\nCc: 4fbacc2fa0ffdbb11bf1ad6925b886ebd08dd15f@vger.kernel.org # v3.12+\nFixes: 930ab3d403ae (i2c: mv64xxx: Add I2C Transaction Generator support)\nSigned-off-by: Gregory CLEMENT <cd8db494d8ed74d7c3f56ec5c769dff3d51dd397@free-electrons.com>\nAcked-by: Arnd Bergmann <f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de>\nSigned-off-by: Jason Cooper <68c46a606457643eab92053c1c05574abb26f861@lakedaemon.net>\n",
+    "trailer": [
+      {
+        "key": "Cc",
+        "value": "4fbacc2fa0ffdbb11bf1ad6925b886ebd08dd15f@vger.kernel.org # v3.12+",
+        "email": "4fbacc2fa0ffdbb11bf1ad6925b886ebd08dd15f@vger.kernel.org # v3.12+"
+      },
+      {
+        "key": "Fixes",
+        "value": "930ab3d403ae (i2c: mv64xxx: Add I2C Transaction Generator support)",
+        "email": null
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Gregory CLEMENT <cd8db494d8ed74d7c3f56ec5c769dff3d51dd397@free-electrons.com>",
+        "email": "cd8db494d8ed74d7c3f56ec5c769dff3d51dd397@free-electrons.com"
+      },
+      {
+        "key": "Acked-by",
+        "value": "Arnd Bergmann <f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de>",
+        "email": "f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Jason Cooper <68c46a606457643eab92053c1c05574abb26f861@lakedaemon.net>",
+        "email": "68c46a606457643eab92053c1c05574abb26f861@lakedaemon.net"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-mvebu/Makefile",
+        "new_path": "arch/arm/mach-mvebu/Makefile",
+        "old_sha1": "2d04f0e218703e74da2ba700f640c6378d93fe66",
+        "new_sha1": "878aebe98dcc817029732847f6b2fb39880f8ba2",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-mvebu/mvebu-soc-id.c",
+        "new_path": "arch/arm/mach-mvebu/mvebu-soc-id.c",
+        "old_sha1": null,
+        "new_sha1": "fe4fc1cbdfaf4fcfc9672e0dcde5fc4846d27655",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-mvebu/mvebu-soc-id.h",
+        "new_path": "arch/arm/mach-mvebu/mvebu-soc-id.h",
+        "old_sha1": null,
+        "new_sha1": "31654252fe35ca63e41706572ddc88e3bb9455f3",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "1ec14ad3132702694f2e1a90b30641cf111183b9",
+    "tree": "98ca9ae91f14ff5d8feed306941ea2c46479e71a",
+    "parent": [
+      "340479aac697bc73e225c122a9753d4964eeda3f"
+    ],
+    "author": {
+      "name": "Chris Wilson",
+      "email": "711c73f64afdce07b7e38039a96d2224209e9a6c@chris-wilson.co.uk",
+      "time_sec": "1291462253",
+      "tz_offset": "0",
+      "date": "2010-12-04 11:30:53.000 UTC"
+    },
+    "committer": {
+      "name": "Chris Wilson",
+      "email": "711c73f64afdce07b7e38039a96d2224209e9a6c@chris-wilson.co.uk",
+      "time_sec": "1291509458",
+      "tz_offset": "0",
+      "date": "2010-12-05 00:37:38.000 UTC"
+    },
+    "subject": "drm/i915: Implement GPU semaphores for inter-ring synchronisation on SNB",
+    "message": "drm/i915: Implement GPU semaphores for inter-ring synchronisation on SNB\n\nThe bulk of the change is to convert the growing list of rings into an\narray so that the relationship between the rings and the semaphore sync\nregisters can be easily computed.\n\nSigned-off-by: Chris Wilson <711c73f64afdce07b7e38039a96d2224209e9a6c@chris-wilson.co.uk>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Chris Wilson <711c73f64afdce07b7e38039a96d2224209e9a6c@chris-wilson.co.uk>",
+        "email": "711c73f64afdce07b7e38039a96d2224209e9a6c@chris-wilson.co.uk"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/i915_debugfs.c",
+        "new_path": "drivers/gpu/drm/i915/i915_debugfs.c",
+        "old_sha1": "3c9d4b876865ead407dddf88ce28c8ab47f36365",
+        "new_sha1": "aedb0215747406c01c4538f066d588639ffa4298",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/i915_dma.c",
+        "new_path": "drivers/gpu/drm/i915/i915_dma.c",
+        "old_sha1": "9a22da9b20833c7cd06faca217f7db32d884dad2",
+        "new_sha1": "664300986fb4ed2d9c9132a02539230d9caf070b",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/i915_drv.c",
+        "new_path": "drivers/gpu/drm/i915/i915_drv.c",
+        "old_sha1": "64844e2e9f8668de80760079a06f7401bf9efa08",
+        "new_sha1": "413a040386a90b273db58aed31256a038ddfa628",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/i915_drv.h",
+        "new_path": "drivers/gpu/drm/i915/i915_drv.h",
+        "old_sha1": "af9ff40b135b59f6068481c2b6eecd7debe779dd",
+        "new_sha1": "8b19b5806230ba33f627e5d919d1a131bc964626",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/i915_gem.c",
+        "new_path": "drivers/gpu/drm/i915/i915_gem.c",
+        "old_sha1": "d99212fe54edfd8bfbac6153d572fa1f1f10e433",
+        "new_sha1": "eeed2e99d247d7393f2a0b847bb8c4ebc8cfacab",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/i915_gem_execbuffer.c",
+        "new_path": "drivers/gpu/drm/i915/i915_gem_execbuffer.c",
+        "old_sha1": "9bdc495e17bb50c9a5399811c539c91b420ab264",
+        "new_sha1": "6fc9cc4857810265bd880e02971098c15994a21c",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/i915_irq.c",
+        "new_path": "drivers/gpu/drm/i915/i915_irq.c",
+        "old_sha1": "9aa1e1dc5fd5c5ba66a93f4f08b2550bd7c93303",
+        "new_sha1": "5e831b7eb3f1bd21d1270149d27a1e151c51da71",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/i915_reg.h",
+        "new_path": "drivers/gpu/drm/i915/i915_reg.h",
+        "old_sha1": "06175e98c5bbee52dea454423cbcd65c941c62da",
+        "new_sha1": "3e03094cf1488ce0e8246855e6d02bd8c0c8308c",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/intel_display.c",
+        "new_path": "drivers/gpu/drm/i915/intel_display.c",
+        "old_sha1": "3063edd2456f9dfb7e5798254f06c2c976d9877e",
+        "new_sha1": "0b6272a2edfc83bead3db89e626907fcc647f70c",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/intel_opregion.c",
+        "new_path": "drivers/gpu/drm/i915/intel_opregion.c",
+        "old_sha1": "9b0d9a867aeada1f1c9d601e21f76e2d9e4e7351",
+        "new_sha1": "f295a7aaadf9e54edb9cbe905739890e3c2edbe4",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/intel_overlay.c",
+        "new_path": "drivers/gpu/drm/i915/intel_overlay.c",
+        "old_sha1": "d0c1add393a3a84df4b7b9ec9d93e51b24ef26f6",
+        "new_sha1": "3fbb98b948d6add163d0538bbe56a1cae738abc6",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/intel_ringbuffer.c",
+        "new_path": "drivers/gpu/drm/i915/intel_ringbuffer.c",
+        "old_sha1": "21871b0766e28d4247ae8f6956a3461b57660aae",
+        "new_sha1": "f71db0cf490990830412fdfbe23b982ccbb68cc5",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/intel_ringbuffer.h",
+        "new_path": "drivers/gpu/drm/i915/intel_ringbuffer.h",
+        "old_sha1": "8e3526777926c70a75a01099f21406ba435c46e6",
+        "new_sha1": "6a3822bc6af228a063113f5474c567eae59fb936",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/i915/intel_tv.c",
+        "new_path": "drivers/gpu/drm/i915/intel_tv.c",
+        "old_sha1": "2f7681989316643149f2c11de896eef6936d884a",
+        "new_sha1": "93206e4eaa6f5b6bdf62e8335eaa0aab4eea4de7",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "5eb3da7246a5b2dfac9f38a7be62b1a0295584c7",
+    "tree": "ac9e5b17b8691c1b0065cdb6289a8cce83c76bc5",
+    "parent": [
+      "27379350a9cb6f39e136325d33b9cc9357da263e"
+    ],
+    "author": {
+      "name": "Santosh Shilimkar",
+      "email": "5b4d8dc9ea337fff5fd1729321eda9873ade0b09@ti.com",
+      "time_sec": "1371165879",
+      "tz_offset": "-240",
+      "date": "2013-06-13 23:24:39.000 UTC"
+    },
+    "committer": {
+      "name": "Santosh Shilimkar",
+      "email": "5b4d8dc9ea337fff5fd1729321eda9873ade0b09@ti.com",
+      "time_sec": "1399578213",
+      "tz_offset": "-240",
+      "date": "2014-05-08 19:43:33.000 UTC"
+    },
+    "subject": "ARM: keystone: Switch over to coherent memory address space",
+    "message": "ARM: keystone: Switch over to coherent memory address space\n\nWith late code patching updates for LPAE machines has merged now and\nmemblock conversion from bootmem is on its way, Keystone can switch to\nthe coherent memory address space which starts beyond 4GB boundary.\nThe idmap alias needs are managed via virt_to_idmap() for boot purpose.\n\nTested-by: Grygorii Strashko <bfa0a1520768723a1c60e18250fb841c342eb8d8@ti.com>\nSigned-off-by: Santosh Shilimkar <5b4d8dc9ea337fff5fd1729321eda9873ade0b09@ti.com>\n",
+    "trailer": [
+      {
+        "key": "Tested-by",
+        "value": "Grygorii Strashko <bfa0a1520768723a1c60e18250fb841c342eb8d8@ti.com>",
+        "email": "bfa0a1520768723a1c60e18250fb841c342eb8d8@ti.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Santosh Shilimkar <5b4d8dc9ea337fff5fd1729321eda9873ade0b09@ti.com>",
+        "email": "5b4d8dc9ea337fff5fd1729321eda9873ade0b09@ti.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-keystone/keystone.c",
+        "new_path": "arch/arm/mach-keystone/keystone.c",
+        "old_sha1": "e0b9e1b9cf303f9f91c8ff4bcff10cd0ab6d0f3c",
+        "new_sha1": "155eb062e8d18f7a643f21c809ea5abf192020e9",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-keystone/memory.h",
+        "new_path": "arch/arm/mach-keystone/memory.h",
+        "old_sha1": null,
+        "new_sha1": "b854fb18eef1cadaad77296e49010123dc828908",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-keystone/platsmp.c",
+        "new_path": "arch/arm/mach-keystone/platsmp.c",
+        "old_sha1": "5cf0683577ea83e54861b927a12cdf9b87d08bd6",
+        "new_sha1": "5f46a7cf907b1f0fe162278c283431ce69aa8bed",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "2584cf83578c26db144730ef498f4070f82ee3ea",
+    "tree": "e8c5ab5140ca2425aacc5d73335072c94afbf831",
+    "parent": [
+      "124fe20d94630b6f173dae5eb815e6e6e350c72d"
+    ],
+    "author": {
+      "name": "Dan Williams",
+      "email": "24ee2bf0bd8ac766c348bf1f0639943bac1535c6@intel.com",
+      "time_sec": "1439262425",
+      "tz_offset": "-240",
+      "date": "2015-08-11 03:07:05.000 UTC"
+    },
+    "committer": {
+      "name": "Dan Williams",
+      "email": "24ee2bf0bd8ac766c348bf1f0639943bac1535c6@intel.com",
+      "time_sec": "1439262425",
+      "tz_offset": "-240",
+      "date": "2015-08-11 03:07:05.000 UTC"
+    },
+    "subject": "arch, drivers: don't include <asm/io.h> directly, use <linux/io.h> instead",
+    "message": "arch, drivers: don't include <asm/io.h> directly, use <linux/io.h> instead\n\nPreparation for uniform definition of ioremap, ioremap_wc, ioremap_wt,\nand ioremap_cache, tree-wide.\n\nAcked-by: Christoph Hellwig <923f7720577207a44b32e59bbfbea59d27f1ae8e@lst.de>\nSigned-off-by: Dan Williams <24ee2bf0bd8ac766c348bf1f0639943bac1535c6@intel.com>\n",
+    "trailer": [
+      {
+        "key": "Acked-by",
+        "value": "Christoph Hellwig <923f7720577207a44b32e59bbfbea59d27f1ae8e@lst.de>",
+        "email": "923f7720577207a44b32e59bbfbea59d27f1ae8e@lst.de"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Dan Williams <24ee2bf0bd8ac766c348bf1f0639943bac1535c6@intel.com>",
+        "email": "24ee2bf0bd8ac766c348bf1f0639943bac1535c6@intel.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-shmobile/pm-rcar.c",
+        "new_path": "arch/arm/mach-shmobile/pm-rcar.c",
+        "old_sha1": "00022ee56f80dc3075e59a6a93e05acb09a38c80",
+        "new_sha1": "9d3dde00c2fe377e1848d5acc72d4a70749d357b",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/ia64/kernel/cyclone.c",
+        "new_path": "arch/ia64/kernel/cyclone.c",
+        "old_sha1": "4826ff957a3d18f6e0266f55dd7519b190ac198e",
+        "new_sha1": "5fa3848ba22497c34d68e4f0e3f4069f79c73d09",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/isdn/icn/icn.h",
+        "new_path": "drivers/isdn/icn/icn.h",
+        "old_sha1": "b713466997a0d2016b9b4a19e0430ac1c342dbe8",
+        "new_sha1": "f8f2e76d34bf30d8e398d577ba025384330ac316",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/mtd/devices/slram.c",
+        "new_path": "drivers/mtd/devices/slram.c",
+        "old_sha1": "2fc4957cbe7fec0a2f873cd6cca11cbb88403919",
+        "new_sha1": "a70eb83e68f12cb82fc6d30f55261883191ce196",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/mtd/nand/diskonchip.c",
+        "new_path": "drivers/mtd/nand/diskonchip.c",
+        "old_sha1": "7da266a5397990281e0a35625435168b2f11a78f",
+        "new_sha1": "0802158a3f757b19506947bdbf1d46124ae6fdc8",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/mtd/onenand/generic.c",
+        "new_path": "drivers/mtd/onenand/generic.c",
+        "old_sha1": "32a216d31141ba91a48f3f3724d7f7659d29dd0e",
+        "new_sha1": "ab7bda0bb245ce4e702f87ebf5136f09920fbf1d",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/scsi/sun3x_esp.c",
+        "new_path": "drivers/scsi/sun3x_esp.c",
+        "old_sha1": "e26e81de7c45ab31e4e3dd7e40db7854d756190b",
+        "new_sha1": "d50c5ed8f428c69380101ce7ccab16fcc4e805d4",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/staging/comedi/drivers/ii_pci20kc.c",
+        "new_path": "drivers/staging/comedi/drivers/ii_pci20kc.c",
+        "old_sha1": "0768bc42a5db5a7756e5132baf8f741b2cc0e2e7",
+        "new_sha1": "14ef1f67dd420bb66d8a2ff90851a3544a277cf8",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/tty/serial/8250/8250_core.c",
+        "new_path": "drivers/tty/serial/8250/8250_core.c",
+        "old_sha1": "37fff12dd4d06b9f561eeabfe2c22f1cb4aa88e4",
+        "new_sha1": "fe902ff52e584efdd0ad47b9baccef751e8dfb6a",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/video/fbdev/s1d13xxxfb.c",
+        "new_path": "drivers/video/fbdev/s1d13xxxfb.c",
+        "old_sha1": "83433cb0dfba42010c4793bd7c8695955c77217f",
+        "new_sha1": "96aa46dc696c94225be2b9a721e6cba6e619af46",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/video/fbdev/stifb.c",
+        "new_path": "drivers/video/fbdev/stifb.c",
+        "old_sha1": "735355b0e0233529ca8ed1fbbf4df40dec867bb9",
+        "new_sha1": "7df4228e25f05fa24c6275dce7c940b3f93c63f8",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "include/linux/io-mapping.h",
+        "new_path": "include/linux/io-mapping.h",
+        "old_sha1": "c27dde7215b5b291394747d35e1f4a19d9f1ac8e",
+        "new_sha1": "e399029b68c5bbdc5ae613c681217c9c554c0f9f",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "include/linux/mtd/map.h",
+        "new_path": "include/linux/mtd/map.h",
+        "old_sha1": "29975c73a95347a582a98b4cf09baf0fea47c7b0",
+        "new_sha1": "366cf77953b55bc737fcded0179df083138b3dbf",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "include/video/vga.h",
+        "new_path": "include/video/vga.h",
+        "old_sha1": "cac567f22e6232265b96ca361a505cbe46b2dfb1",
+        "new_sha1": "d334e64c1c193e23d739510bd164d96944112206",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "d5af49c92a8aff8236e7b0bb35e9af364000c017",
+    "tree": "f7cd9e3bbb0a452ee1f3868b29f71caefdbbfc1c",
+    "parent": [
+      "a689554ba6ed81cf606c16539f6ffc2a1dcdaf8e"
+    ],
+    "author": {
+      "name": "Hai Li",
+      "email": "e16f2cfe3eeddac6a07d0579fc92925faf1d9f49@codeaurora.org",
+      "time_sec": "1427412317",
+      "tz_offset": "-240",
+      "date": "2015-03-26 23:25:17.000 UTC"
+    },
+    "committer": {
+      "name": "Rob Clark",
+      "email": "915c10c999604870200b6defbe633d857c856ca0@gmail.com",
+      "time_sec": "1427930978",
+      "tz_offset": "-240",
+      "date": "2015-04-01 23:29:38.000 UTC"
+    },
+    "subject": "drm/msm/mdp5: Enable DSI connector in msm drm driver",
+    "message": "drm/msm/mdp5: Enable DSI connector in msm drm driver\n\nThis change adds the support in mdp5 kms driver for single\nand dual DSI. Dual DSI case depends on the framework API\nand sequence change to support dual data path.\n\nv1: Initial change\nv2: Address Rob Clark's comment\n- Separate command mode encoder to a new file mdp5_cmd_encoder.c\n- Rebase to not depend on msm_drm_sub_dev change\n\nSigned-off-by: Hai Li <e16f2cfe3eeddac6a07d0579fc92925faf1d9f49@codeaurora.org>\nSigned-off-by: Rob Clark <915c10c999604870200b6defbe633d857c856ca0@gmail.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Hai Li <e16f2cfe3eeddac6a07d0579fc92925faf1d9f49@codeaurora.org>",
+        "email": "e16f2cfe3eeddac6a07d0579fc92925faf1d9f49@codeaurora.org"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Rob Clark <915c10c999604870200b6defbe633d857c856ca0@gmail.com>",
+        "email": "915c10c999604870200b6defbe633d857c856ca0@gmail.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/msm/Makefile",
+        "new_path": "drivers/gpu/drm/msm/Makefile",
+        "old_sha1": "5c144cc5f8db314f6cbcb502290a876d03efb1c1",
+        "new_sha1": "ab2086783feec509fa982c477cd8de504447ae72",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_cfg.c",
+        "new_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_cfg.c",
+        "old_sha1": "56dfc5b626dd78ece90a1d2a8ec1973cda6fe4e1",
+        "new_sha1": "e001e6b2296a2ebd5cf602fbf0e3ba89f49ecf0d",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_cmd_encoder.c",
+        "new_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_cmd_encoder.c",
+        "old_sha1": null,
+        "new_sha1": "e4e89567f51d51924f8ff6c4804125b7aa131c87",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_crtc.c",
+        "new_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_crtc.c",
+        "old_sha1": "9527ad112446c6e80da0ba6757288c5d0e6b020b",
+        "new_sha1": "c1530772187dbd36bf672723af074f0af9a44c5d",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_encoder.c",
+        "new_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_encoder.c",
+        "old_sha1": "2ef6d1b0a218c532a27e67288eb92787b7db8bf8",
+        "new_sha1": "1188f4bf1e603853e1d872dd0ad06ee55de9cceb",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c",
+        "new_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.c",
+        "old_sha1": "4d8f5b471e4d3b1c6ab4262011ea90ce7db602ad",
+        "new_sha1": "dfa8beb9343aaa171110adabb49c549e4143c0da",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.h",
+        "new_path": "drivers/gpu/drm/msm/mdp/mdp5/mdp5_kms.h",
+        "old_sha1": "6efa5c61aa9809d3492b6f985f84c55fd85d8c47",
+        "new_sha1": "2c0de174cc09b9e198d05e3eed1745e193d997ba",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/gpu/drm/msm/msm_drv.c",
+        "new_path": "drivers/gpu/drm/msm/msm_drv.c",
+        "old_sha1": "0c38f34066e5582d0e7cb3f1198bc50c034ecf97",
+        "new_sha1": "47f4dd407671970fc247c4a9999dcccc03202c8e",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  },
+  {
+    "commit": "b340c656af6317e28b466996a72cca019d97b42d",
+    "tree": "f8be5b9f7db4146ca8cf8e4288d49b9bc7e6105b",
+    "parent": [
+      "9088616fb3c4e0d3ec4efb20378691066a218f9c"
+    ],
+    "author": {
+      "name": "Chris Metcalf",
+      "email": "074881f6f5da4d3b5278870ff234d1077ee622c0@ezchip.com",
+      "time_sec": "1427124083",
+      "tz_offset": "-240",
+      "date": "2015-03-23 15:21:23.000 UTC"
+    },
+    "committer": {
+      "name": "Chris Metcalf",
+      "email": "074881f6f5da4d3b5278870ff234d1077ee622c0@ezchip.com",
+      "time_sec": "1429289924",
+      "tz_offset": "-240",
+      "date": "2015-04-17 16:58:44.000 UTC"
+    },
+    "subject": "tile: support arch_irq_work_raise",
+    "message": "tile: support arch_irq_work_raise\n\nTile includes a hypervisor hook to deliver messages to arbitrary\ntiles, so we can use that to raise an interrupt as soon as\npossible on our own core.  Unfortunately the Tilera hypervisor\ndisabled that support on principle in previous releases, but\nit will be available in MDE 4.3.4 and later.\n\nSigned-off-by: Chris Metcalf <074881f6f5da4d3b5278870ff234d1077ee622c0@ezchip.com>\nAcked-by: Frederic Weisbecker <e8a1bf9163cb25e93cfd6540f223b3872ea7ee55@gmail.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Chris Metcalf <074881f6f5da4d3b5278870ff234d1077ee622c0@ezchip.com>",
+        "email": "074881f6f5da4d3b5278870ff234d1077ee622c0@ezchip.com"
+      },
+      {
+        "key": "Acked-by",
+        "value": "Frederic Weisbecker <e8a1bf9163cb25e93cfd6540f223b3872ea7ee55@gmail.com>",
+        "email": "e8a1bf9163cb25e93cfd6540f223b3872ea7ee55@gmail.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/include/asm/Kbuild",
+        "new_path": "arch/tile/include/asm/Kbuild",
+        "old_sha1": "b4c488b657456f3e5a4fa4b74c40a3a427b5cc28",
+        "new_sha1": "f5433e0e34e0bc5dc6e176490388141ea71db011",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/tile/include/asm/irq_work.h",
+        "new_path": "arch/tile/include/asm/irq_work.h",
+        "old_sha1": null,
+        "new_sha1": "48af33a61a2ca75f5c6183c83d338d1f97dd622b",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/include/asm/smp.h",
+        "new_path": "arch/tile/include/asm/smp.h",
+        "old_sha1": "9a326b64f7aeae059ad7de57d2744a3270f6e18b",
+        "new_sha1": "735e7f14473360617a78071f7d2c7dc059c847f2",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/kernel/smp.c",
+        "new_path": "arch/tile/kernel/smp.c",
+        "old_sha1": "d3c4ed780ce2244cfcab4da5068fb29442ac5786",
+        "new_sha1": "07e3ff5cc74010170ca43f7df20acb060df2727b",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "fb702b942bf638baa6cbbbda9f76794db62921ef",
+    "tree": "c065b0ab61cbb80b6209c725836a6864624b3c46",
+    "parent": [
+      "de5d9bf6541736dc7ad264d2b5cc99bc1b2ad958"
+    ],
+    "author": {
+      "name": "Chris Metcalf",
+      "email": "074881f6f5da4d3b5278870ff234d1077ee622c0@tilera.com",
+      "time_sec": "1277498471",
+      "tz_offset": "-240",
+      "date": "2010-06-25 20:41:11.000 UTC"
+    },
+    "committer": {
+      "name": "Chris Metcalf",
+      "email": "074881f6f5da4d3b5278870ff234d1077ee622c0@tilera.com",
+      "time_sec": "1278437641",
+      "tz_offset": "-240",
+      "date": "2010-07-06 17:34:01.000 UTC"
+    },
+    "subject": "arch/tile: Enable more sophisticated IRQ model for 32-bit chips.",
+    "message": "arch/tile: Enable more sophisticated IRQ model for 32-bit chips.\n\nThis model is based on the on-chip interrupt model used by the\nTILE-Gx next-generation hardware, and interacts much more cleanly\nwith the Linux generic IRQ layer.\n\nThe change includes modifications to the Tilera hypervisor, which\nare reflected in the hypervisor headers in arch/tile/include/arch/.\n\nSigned-off-by: Chris Metcalf <074881f6f5da4d3b5278870ff234d1077ee622c0@tilera.com>\nAcked-by: Thomas Gleixner <00e4cf8f46a57000a44449bf9dd8cbbcc209fd2a@linutronix.de>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Chris Metcalf <074881f6f5da4d3b5278870ff234d1077ee622c0@tilera.com>",
+        "email": "074881f6f5da4d3b5278870ff234d1077ee622c0@tilera.com"
+      },
+      {
+        "key": "Acked-by",
+        "value": "Thomas Gleixner <00e4cf8f46a57000a44449bf9dd8cbbcc209fd2a@linutronix.de>",
+        "email": "00e4cf8f46a57000a44449bf9dd8cbbcc209fd2a@linutronix.de"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/include/arch/chip_tile64.h",
+        "new_path": "arch/tile/include/arch/chip_tile64.h",
+        "old_sha1": "18b5bc8e563f2dd6bdeff5ffb229db2d3e5fb544",
+        "new_sha1": "1246573be59ee78b872ed5d8fa5d583cf16860ac",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/include/arch/chip_tilepro.h",
+        "new_path": "arch/tile/include/arch/chip_tilepro.h",
+        "old_sha1": "9852af16386296f82acd37a664e82e55ab4ae232",
+        "new_sha1": "e864c47fc89cce6cd7c366784e8d76d22a43e280",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/include/asm/irq.h",
+        "new_path": "arch/tile/include/asm/irq.h",
+        "old_sha1": "9be1f849fac9f151d72e27f3efca88c028b1d169",
+        "new_sha1": "572fd3ef1d7314daf51ee058376b75446649c076",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/include/asm/smp.h",
+        "new_path": "arch/tile/include/asm/smp.h",
+        "old_sha1": "da24858a7392932ff3c5646def90909f9c897711",
+        "new_sha1": "532124ae4b128f896335b0629af9043fc5277aaa",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/include/hv/hypervisor.h",
+        "new_path": "arch/tile/include/hv/hypervisor.h",
+        "old_sha1": "84b31551080a527d232925c37e9ebfd73507d599",
+        "new_sha1": "a90d2989587a297785dbf0389ac3d60fab2c38d8",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/tile/include/hv/pagesize.h",
+        "new_path": "arch/tile/include/hv/pagesize.h",
+        "old_sha1": null,
+        "new_sha1": "58bed114fedd7212f3a9793fe41a8e6b52c49b36",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/kernel/hvglue.lds",
+        "new_path": "arch/tile/kernel/hvglue.lds",
+        "old_sha1": "698489b4c7ab69e0aea59ed2ef390982c3fadccf",
+        "new_sha1": "2b7cd0a659a9d7c312c8e0a668c8b18e0d0de42c",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/kernel/irq.c",
+        "new_path": "arch/tile/kernel/irq.c",
+        "old_sha1": "24cc6b2abc2c9cb97fa398aa74946b50f47296f1",
+        "new_sha1": "596c600869305ade6f13025a18a20039193ddd64",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/kernel/smp.c",
+        "new_path": "arch/tile/kernel/smp.c",
+        "old_sha1": "782c1bfa6dfeb261d070321e18427b8dd12b19ad",
+        "new_sha1": "1cb5ec79de043ad4cdf9ebf244e5d9356c767bf1",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "129622672d70711c6c844fb529381ff0dad9085a",
+    "tree": "ea05d97ec3a457814e282c5cf8423c9e30994cb9",
+    "parent": [
+      "bce5bbbb23f780a792be7e594af7cd4b4aae1cd4"
+    ],
+    "author": {
+      "name": "Chris Metcalf",
+      "email": "074881f6f5da4d3b5278870ff234d1077ee622c0@tilera.com",
+      "time_sec": "1333833017",
+      "tz_offset": "-240",
+      "date": "2012-04-07 21:10:17.000 UTC"
+    },
+    "committer": {
+      "name": "Chris Metcalf",
+      "email": "074881f6f5da4d3b5278870ff234d1077ee622c0@tilera.com",
+      "time_sec": "1342643951",
+      "tz_offset": "-240",
+      "date": "2012-07-18 20:39:11.000 UTC"
+    },
+    "subject": "arch/tile: tilegx PCI root complex support",
+    "message": "arch/tile: tilegx PCI root complex support\n\nThis change implements PCIe root complex support for tilegx using\nthe kernel support layer for accessing the TRIO hardware shim.\n\nReviewed-by: Bjorn Helgaas <f10ec01be0c6b54271af5c550cd257810bdf3268@google.com> [changes in 07487f3]\nSigned-off-by: Chris Metcalf <074881f6f5da4d3b5278870ff234d1077ee622c0@tilera.com>\n",
+    "trailer": [
+      {
+        "key": "Reviewed-by",
+        "value": "Bjorn Helgaas <f10ec01be0c6b54271af5c550cd257810bdf3268@google.com> [changes in 07487f3]",
+        "email": "f10ec01be0c6b54271af5c550cd257810bdf3268@google.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Chris Metcalf <074881f6f5da4d3b5278870ff234d1077ee622c0@tilera.com>",
+        "email": "074881f6f5da4d3b5278870ff234d1077ee622c0@tilera.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/Kconfig",
+        "new_path": "arch/tile/Kconfig",
+        "old_sha1": "645979cfb718dc53e15a37f205de722faf3db479",
+        "new_sha1": "a5302d319229754292bc87a8907b6ac25be0b097",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/include/asm/pci.h",
+        "new_path": "arch/tile/include/asm/pci.h",
+        "old_sha1": "32e6cbe8dff3350d1d7e236691fced9a47bd2c8d",
+        "new_sha1": "2c224c47d8ab2a562aa9844b1e7ead27d3ec2162",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/kernel/Makefile",
+        "new_path": "arch/tile/kernel/Makefile",
+        "old_sha1": "5de99248d8df1a018aa200f48b249765690bc383",
+        "new_sha1": "49d4ce3cd7f4048c4b1e95e6d00cf20ef6cec06e",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/tile/kernel/pci_gx.c",
+        "new_path": "arch/tile/kernel/pci_gx.c",
+        "old_sha1": null,
+        "new_sha1": "1b996bb628f11444d3f353d7428a63ddf8f5e99d",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/kernel/setup.c",
+        "new_path": "arch/tile/kernel/setup.c",
+        "old_sha1": "dd87f342039064a0e545382acdf65321d0815ac1",
+        "new_sha1": "6d179dfcc15e62e65e41330f2b8cc702988ee5c9",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/tile/mm/pgtable.c",
+        "new_path": "arch/tile/mm/pgtable.c",
+        "old_sha1": "345edfed9fcd4cb36b35f70d083e9038803bae4a",
+        "new_sha1": "de0de0c0e8a19946bcc6c0f14c486776d8091097",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/pci/quirks.c",
+        "new_path": "drivers/pci/quirks.c",
+        "old_sha1": "194b243a281782864c0e6284fdcc23546e9f15b1",
+        "new_sha1": "9478f72765122f69753b14105c4a4ce40c6eff42",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "ffe1f0df586237a18f9b568597bddabb56e96d5e",
+    "tree": "c0a56204cdd1f9f9bcde3f0d641bbcaf5414c15f",
+    "parent": [
+      "0380a3f37540ad0582b3c749a74fc127af914689"
+    ],
+    "author": {
+      "name": "Chuck Lever",
+      "email": "e7d8216bf9b1956703857d0050bd04192118f43d@oracle.com",
+      "time_sec": "1433431302",
+      "tz_offset": "-240",
+      "date": "2015-06-04 15:21:42.000 UTC"
+    },
+    "committer": {
+      "name": "J. Bruce Fields",
+      "email": "51738506c1b2ccb0761f23bdc612c93babf738ea@redhat.com",
+      "time_sec": "1433451362",
+      "tz_offset": "-240",
+      "date": "2015-06-04 20:56:02.000 UTC"
+    },
+    "subject": "rpcrdma: Merge svcrdma and xprtrdma modules into one",
+    "message": "rpcrdma: Merge svcrdma and xprtrdma modules into one\n\nBi-directional RPC support means code in svcrdma.ko invokes a bit of\ncode in xprtrdma.ko, and vice versa. To avoid loader/linker loops,\nmerge the server and client side modules together into a single\nmodule.\n\nWhen backchannel capabilities are added, the combined module will\nregister all needed transport capabilities so that Upper Layer\nconsumers automatically have everything needed to create a\nbi-directional transport connection.\n\nModule aliases are added for backwards compatibility with user\nspace, which still may expect svcrdma.ko or xprtrdma.ko to be\npresent.\n\nThis commit reverts commit 2e8c12e1b765 (\"xprtrdma: add separate\nKconfig options for NFSoRDMA client and server support\") and\nprovides a single CONFIG option for enabling the new module.\n\nSigned-off-by: Chuck Lever <e7d8216bf9b1956703857d0050bd04192118f43d@oracle.com>\nSigned-off-by: J. Bruce Fields <51738506c1b2ccb0761f23bdc612c93babf738ea@redhat.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Chuck Lever <e7d8216bf9b1956703857d0050bd04192118f43d@oracle.com>",
+        "email": "e7d8216bf9b1956703857d0050bd04192118f43d@oracle.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "J. Bruce Fields <51738506c1b2ccb0761f23bdc612c93babf738ea@redhat.com>",
+        "email": "51738506c1b2ccb0761f23bdc612c93babf738ea@redhat.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "net/sunrpc/Kconfig",
+        "new_path": "net/sunrpc/Kconfig",
+        "old_sha1": "9068e72aa73c7c93fb34df75461f81713f485828",
+        "new_sha1": "04ce2c0b660e0d381a22038bb463d46312befaf5",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "net/sunrpc/Makefile",
+        "new_path": "net/sunrpc/Makefile",
+        "old_sha1": "15e6f6c23c5d150aa7b0c22bbd6315bc0d5814cb",
+        "new_sha1": "936ad0a15371ac4f1e49b8785ef645fa65583e83",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "net/sunrpc/xprtrdma/Makefile",
+        "new_path": "net/sunrpc/xprtrdma/Makefile",
+        "old_sha1": "579f72bbcf4ba66eb58b7c9cfde0bde812c996e2",
+        "new_sha1": "48913de240bd448fe600a8cd1e97f8e0e860866d",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "net/sunrpc/xprtrdma/module.c",
+        "new_path": "net/sunrpc/xprtrdma/module.c",
+        "old_sha1": null,
+        "new_sha1": "560712bd9fa2c66680bfbcdd04bf7eab50496a77",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "net/sunrpc/xprtrdma/svc_rdma.c",
+        "new_path": "net/sunrpc/xprtrdma/svc_rdma.c",
+        "old_sha1": "c1b6270262c297f8af8c902c40eec32aa6eae215",
+        "new_sha1": "2cd252f023a549231763b62c36c03de45774e37d",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "net/sunrpc/xprtrdma/transport.c",
+        "new_path": "net/sunrpc/xprtrdma/transport.c",
+        "old_sha1": "54f23b1be98617d5c29fb482a221ad6ed1391876",
+        "new_sha1": "436da2caec955ded2b2f4f6a2056cb1191594373",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "net/sunrpc/xprtrdma/xprt_rdma.h",
+        "new_path": "net/sunrpc/xprtrdma/xprt_rdma.h",
+        "old_sha1": "e60907b0e1f1643f7aa685a74a09a908c089ece8",
+        "new_sha1": "58163b88738c2363c559be28d3f3807043065826",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  },
+  {
+    "commit": "0e9cebe724597a76ab1b0ebc0a21e16f7db11b47",
+    "tree": "8217c6cea86697a985a7f88ff4240bb93277db84",
+    "parent": [
+      "7f61f5a022101e0c38c3cff2ef9ace9c9c86dbfb"
+    ],
+    "author": {
+      "name": "Josef Bacik",
+      "email": "631dfb3d07694fdcf26abc7aac2c6c2b641f8bde@fb.com",
+      "time_sec": "1426863037",
+      "tz_offset": "-240",
+      "date": "2015-03-20 14:50:37.000 UTC"
+    },
+    "committer": {
+      "name": "Mike Snitzer",
+      "email": "85e533f2e78486213c4d69f71462342ec0c62734@redhat.com",
+      "time_sec": "1429114224",
+      "tz_offset": "-240",
+      "date": "2015-04-15 16:10:24.000 UTC"
+    },
+    "subject": "dm: add log writes target",
+    "message": "dm: add log writes target\n\nIntroduce a new target that is meant for file system developers to test file\nsystem integrity at particular points in the life of a file system.  We capture\nall write requests and associated data and log them to a separate device\nfor later replay.  There is a userspace utility to do this replay.  The\nidea behind this is to give file system developers a tool to verify that\nthe file system is always consistent.\n\nSigned-off-by: Josef Bacik <631dfb3d07694fdcf26abc7aac2c6c2b641f8bde@fb.com>\nReviewed-by: Zach Brown <bdd5a5f42152ba789e24c1ef8132eb16704ed8a4@zabbo.net>\nSigned-off-by: Mike Snitzer <85e533f2e78486213c4d69f71462342ec0c62734@redhat.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Josef Bacik <631dfb3d07694fdcf26abc7aac2c6c2b641f8bde@fb.com>",
+        "email": "631dfb3d07694fdcf26abc7aac2c6c2b641f8bde@fb.com"
+      },
+      {
+        "key": "Reviewed-by",
+        "value": "Zach Brown <bdd5a5f42152ba789e24c1ef8132eb16704ed8a4@zabbo.net>",
+        "email": "bdd5a5f42152ba789e24c1ef8132eb16704ed8a4@zabbo.net"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Mike Snitzer <85e533f2e78486213c4d69f71462342ec0c62734@redhat.com>",
+        "email": "85e533f2e78486213c4d69f71462342ec0c62734@redhat.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "Documentation/device-mapper/log-writes.txt",
+        "new_path": "Documentation/device-mapper/log-writes.txt",
+        "old_sha1": null,
+        "new_sha1": "c10f30c9b534ef7eb1c8a5c838c914148a6cd105",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/md/Kconfig",
+        "new_path": "drivers/md/Kconfig",
+        "old_sha1": "109f9dcc9cab9770dda934b7927ca23fd90b9515",
+        "new_sha1": "6ddc983417d5a8120700fbfa98508d1db3e35546",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "drivers/md/Makefile",
+        "new_path": "drivers/md/Makefile",
+        "old_sha1": "a2da532b1c2bda38d18a6324c2dfdcfcc7108df5",
+        "new_sha1": "1863feaa584612eb862ff20d7806c8c12608b17c",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "drivers/md/dm-log-writes.c",
+        "new_path": "drivers/md/dm-log-writes.c",
+        "old_sha1": null,
+        "new_sha1": "93e08446a87d06ff3375f78d6e28ece4a1063204",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "f46b5a66b3316ef2f8febfe4c56e2d555e2c3979",
+    "tree": "dc3a5898d323539728576df50f8be621936d6f04",
+    "parent": [
+      "9d2423c5c3fbb0f110ac0b6cdc5a8e4d64729483"
+    ],
+    "author": {
+      "name": "Christoph Hellwig",
+      "email": "923f7720577207a44b32e59bbfbea59d27f1ae8e@lst.de",
+      "time_sec": "1213235633",
+      "tz_offset": "-240",
+      "date": "2008-06-12 01:53:53.000 UTC"
+    },
+    "committer": {
+      "name": "Chris Mason",
+      "email": "a169954b4cb1a46cee25f659d3bddfebe02b5fba@oracle.com",
+      "time_sec": "1222355043",
+      "tz_offset": "-240",
+      "date": "2008-09-25 15:04:03.000 UTC"
+    },
+    "subject": "Btrfs: split out ioctl.c",
+    "message": "Btrfs: split out ioctl.c\n\nSplit the ioctl handling out of inode.c into a file of it's own.\nAlso fix up checkpatch.pl warnings for the moved code.\n\nSigned-off-by: Christoph Hellwig <923f7720577207a44b32e59bbfbea59d27f1ae8e@lst.de>\nSigned-off-by: Chris Mason <a169954b4cb1a46cee25f659d3bddfebe02b5fba@oracle.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Christoph Hellwig <923f7720577207a44b32e59bbfbea59d27f1ae8e@lst.de>",
+        "email": "923f7720577207a44b32e59bbfbea59d27f1ae8e@lst.de"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Chris Mason <a169954b4cb1a46cee25f659d3bddfebe02b5fba@oracle.com>",
+        "email": "a169954b4cb1a46cee25f659d3bddfebe02b5fba@oracle.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/Makefile",
+        "new_path": "fs/btrfs/Makefile",
+        "old_sha1": "9dcfc2fe3332681508226606ec7a4d1f96f51e7b",
+        "new_sha1": "7ed6b39e42d29ce58418b130cf56b6b90a90dc62",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/ctree.h",
+        "new_path": "fs/btrfs/ctree.h",
+        "old_sha1": "7ae4666103c01a46eba87a637476d90ae0872fc7",
+        "new_sha1": "181c81d2989785db3941e3d70a3e4c7b9d3d4a6c",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/inode.c",
+        "new_path": "fs/btrfs/inode.c",
+        "old_sha1": "7daef8d370064cf667e03d0a93ee42d821f35313",
+        "new_sha1": "0c79346fd2c9e6f3e6696636f70e8ae78cd5159b",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/ioctl.c",
+        "new_path": "fs/btrfs/ioctl.c",
+        "old_sha1": null,
+        "new_sha1": "da8de6cfdb5a3eb9ae7451f221e3f134e18a878e",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "890871be854b5f5e43e7ba2475f706209906cc24",
+    "tree": "9d087adf7a28bb910992d07d93ea2a992e394110",
+    "parent": [
+      "57fd5a5ff8b48b99e90b22fc143082aba755c6c0"
+    ],
+    "author": {
+      "name": "Chris Mason",
+      "email": "a169954b4cb1a46cee25f659d3bddfebe02b5fba@oracle.com",
+      "time_sec": "1251923092",
+      "tz_offset": "-240",
+      "date": "2009-09-02 20:24:52.000 UTC"
+    },
+    "committer": {
+      "name": "Chris Mason",
+      "email": "a169954b4cb1a46cee25f659d3bddfebe02b5fba@oracle.com",
+      "time_sec": "1252690265",
+      "tz_offset": "-240",
+      "date": "2009-09-11 17:31:05.000 UTC"
+    },
+    "subject": "Btrfs: switch extent_map to a rw lock",
+    "message": "Btrfs: switch extent_map to a rw lock\n\nThere are two main users of the extent_map tree.  The\nfirst is regular file inodes, where it is evenly spread\nbetween readers and writers.\n\nThe second is the chunk allocation tree, which maps blocks from\nlogical addresses to phyiscal ones, and it is 99.99% reads.\n\nThe mapping tree is a point of lock contention during heavy IO\nworkloads, so this commit switches things to a rw lock.\n\nSigned-off-by: Chris Mason <a169954b4cb1a46cee25f659d3bddfebe02b5fba@oracle.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Chris Mason <a169954b4cb1a46cee25f659d3bddfebe02b5fba@oracle.com>",
+        "email": "a169954b4cb1a46cee25f659d3bddfebe02b5fba@oracle.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/compression.c",
+        "new_path": "fs/btrfs/compression.c",
+        "old_sha1": "de1e2fd32080f0c5c4a835460abf514546c7a6bf",
+        "new_sha1": "78451a58f209ce71a4ae846bab006ddc16367f40",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/disk-io.c",
+        "new_path": "fs/btrfs/disk-io.c",
+        "old_sha1": "20cefc6f22c4682d1e516f47ccceb488dcbf73e5",
+        "new_sha1": "b6cfdd9164e251abc3b09e711bdf8f9a775c1b51",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/extent-tree.c",
+        "new_path": "fs/btrfs/extent-tree.c",
+        "old_sha1": "72a2b9c28e9fc7a6a7aacce09469cb6414215635",
+        "new_sha1": "edd86ae9e149b7112d9320018162c774719aa459",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/extent_io.c",
+        "new_path": "fs/btrfs/extent_io.c",
+        "old_sha1": "8d7a152a90c666277ef3e2b480466b0f8bf4d126",
+        "new_sha1": "41cf1b451b412ce5defdbab88b00aa2d320144cd",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/extent_map.c",
+        "new_path": "fs/btrfs/extent_map.c",
+        "old_sha1": "30c9365861e69602f96e4debc96bacf8889028e1",
+        "new_sha1": "72e9fa3c31f5f132a8d477f7a1ef741a22594460",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/extent_map.h",
+        "new_path": "fs/btrfs/extent_map.h",
+        "old_sha1": "fb6eeef06bb0a88abcf9297c2c6d9156a35af552",
+        "new_sha1": "6216dfbcf9be7a195632d733248b1cb766c6139e",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/file.c",
+        "new_path": "fs/btrfs/file.c",
+        "old_sha1": "a760d97279ace0d24ef752f6591afdd602ea6d48",
+        "new_sha1": "8a9c76aecdf30e3413512bd74ab7b09cbe51a3ff",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/inode.c",
+        "new_path": "fs/btrfs/inode.c",
+        "old_sha1": "04b53b5ebe59227936865634e2a03184a671db8e",
+        "new_sha1": "f1df11718618f62cb0f650b8501f256e1068e488",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/relocation.c",
+        "new_path": "fs/btrfs/relocation.c",
+        "old_sha1": "c04f7f212602c4bcb71e58db938fcd0d8a9128ad",
+        "new_sha1": "4adab903fc2bd269b17aa4c565368a6aae5c2451",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/btrfs/volumes.c",
+        "new_path": "fs/btrfs/volumes.c",
+        "old_sha1": "a7e53773e743f1019c36aaf7012747e51995f83a",
+        "new_sha1": "d2358c06bbd9fc6e7bb59b905f4df2a2245d24cc",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "c0ddc8c745b7f89c50385fd7aa03c78dc543fa7a",
+    "tree": "454158009b96ebd014d42644502af40417cc985c",
+    "parent": [
+      "f7644cbfcdf03528f0f450f3940c4985b2291f49"
+    ],
+    "author": {
+      "name": "Richard Weinberger",
+      "email": "320bca71fc381a4a025636043ca86e734e31cf8b@nod.at",
+      "time_sec": "1437948415",
+      "tz_offset": "120",
+      "date": "2015-07-26 22:06:55.000 UTC"
+    },
+    "committer": {
+      "name": "Steven Rostedt",
+      "email": "43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org",
+      "time_sec": "1439328875",
+      "tz_offset": "-240",
+      "date": "2015-08-11 21:34:35.000 UTC"
+    },
+    "subject": "localmodconfig: Use Kbuild files too",
+    "message": "localmodconfig: Use Kbuild files too\n\nIn kbuild it is allowed to define objects in files named \"Makefile\"\nand \"Kbuild\".\nCurrently localmodconfig reads objects only from \"Makefile\"s and misses\nmodules like nouveau.\n\nLink: http://lkml.kernel.org/r/1437948415-16290-1-git-send-email-320bca71fc381a4a025636043ca86e734e31cf8b@nod.at\n\nCc: 4fbacc2fa0ffdbb11bf1ad6925b886ebd08dd15f@vger.kernel.org\nReported-and-tested-by: Leonidas Spyropoulos <83bf853f5b730ac8a35391b5854c1f01c66c5b55@gmail.com>\nSigned-off-by: Richard Weinberger <320bca71fc381a4a025636043ca86e734e31cf8b@nod.at>\nSigned-off-by: Steven Rostedt <43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org>\n",
+    "trailer": [
+      {
+        "key": "Cc",
+        "value": "4fbacc2fa0ffdbb11bf1ad6925b886ebd08dd15f@vger.kernel.org",
+        "email": "4fbacc2fa0ffdbb11bf1ad6925b886ebd08dd15f@vger.kernel.org"
+      },
+      {
+        "key": "Reported-and-tested-by",
+        "value": "Leonidas Spyropoulos <83bf853f5b730ac8a35391b5854c1f01c66c5b55@gmail.com>",
+        "email": "83bf853f5b730ac8a35391b5854c1f01c66c5b55@gmail.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Richard Weinberger <320bca71fc381a4a025636043ca86e734e31cf8b@nod.at>",
+        "email": "320bca71fc381a4a025636043ca86e734e31cf8b@nod.at"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Steven Rostedt <43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org>",
+        "email": "43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33261",
+        "new_mode": "33261",
+        "old_path": "scripts/kconfig/streamline_config.pl",
+        "new_path": "scripts/kconfig/streamline_config.pl",
+        "old_sha1": "9cb8522d8d22a826caaec968e82c77516339ca01",
+        "new_sha1": "f3d3fb42b8735e76aa54bd4c433574f7afc43b0e",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  },
+  {
+    "commit": "a77ed525d0120e244937eaa74c6086da1dab283a",
+    "tree": "2299669b28143cb8605e0b8b15a05de73846cb93",
+    "parent": [
+      "27b7156886d875f2f54fab8790144e1fa80b7160"
+    ],
+    "author": {
+      "name": "Benjamin Poirier",
+      "email": "88a09e5f2ee113c8016801accb3bb63c7cc88849@suse.com",
+      "time_sec": "1460333191",
+      "tz_offset": "-420",
+      "date": "2016-04-11 00:06:31.000 UTC"
+    },
+    "committer": {
+      "name": "Steven Rostedt",
+      "email": "43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org",
+      "time_sec": "1461679501",
+      "tz_offset": "-240",
+      "date": "2016-04-26 14:05:01.000 UTC"
+    },
+    "subject": "localmodconfig: Fix parsing of \"help\" text",
+    "message": "localmodconfig: Fix parsing of \"help\" text\n\nHelp text may start with \"help\" or \"---help---\". This patch fixes\nread_kconfig() to recognize the second variant.\n\nThis removes useless junk from %depends and %selects. That junk is due to\nhelp text that contains the words \"selects\" and \"depends\".\n\nLink: http://lkml.kernel.org/r/1460333193-16361-2-git-send-email-88a09e5f2ee113c8016801accb3bb63c7cc88849@suse.com\n\nSigned-off-by: Benjamin Poirier <88a09e5f2ee113c8016801accb3bb63c7cc88849@suse.com>\nSigned-off-by: Steven Rostedt <43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Benjamin Poirier <88a09e5f2ee113c8016801accb3bb63c7cc88849@suse.com>",
+        "email": "88a09e5f2ee113c8016801accb3bb63c7cc88849@suse.com"
+      },
+      {
+        "key": "Signed-off-by",
+        "value": "Steven Rostedt <43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org>",
+        "email": "43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33261",
+        "new_mode": "33261",
+        "old_path": "scripts/kconfig/streamline_config.pl",
+        "new_path": "scripts/kconfig/streamline_config.pl",
+        "old_sha1": "64d750cc5ae424d0764e852ba03c1624c392c214",
+        "new_sha1": "b2f904a24c5c1ad9978efb39aa0879bd8c5bba65",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  },
+  {
+    "commit": "e7b13441895fd0f95c34a004eed364524cca71cb",
+    "tree": "95f334a8017072f5b1a968fd4f16704abeba721e",
+    "parent": [
+      "4892063043282229c1296d86a2f86989ef30a97c"
+    ],
+    "author": {
+      "name": "Steven Rostedt",
+      "email": "9d183ff83abfec5c556edaf86a280a53916a11d8@redhat.com",
+      "time_sec": "1308098676",
+      "tz_offset": "-240",
+      "date": "2011-06-15 00:44:36.000 UTC"
+    },
+    "committer": {
+      "name": "Steven Rostedt",
+      "email": "43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org",
+      "time_sec": "1308098676",
+      "tz_offset": "-240",
+      "date": "2011-06-15 00:44:36.000 UTC"
+    },
+    "subject": "ktest: Fix tar extracting of modules to target",
+    "message": "ktest: Fix tar extracting of modules to target\n\nThe tar command to create the module directory is cjf, but the\nextraction only had xf. This works on most versions of tar, but some\nversions of tar require xjf for extraction as well.\n\nSigned-off-by: Steven Rostedt <43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Steven Rostedt <43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org>",
+        "email": "43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33261",
+        "new_mode": "33261",
+        "old_path": "tools/testing/ktest/ktest.pl",
+        "new_path": "tools/testing/ktest/ktest.pl",
+        "old_sha1": "24286cea14af3bf8cbd71574dfae4a634775df1e",
+        "new_sha1": "5b35fa04429b8cb2bdd347b1c8eda9bdaa09a6a9",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "bf5438fca2950b03c21ad868090cc1a8fcd49536",
+    "tree": "9fc5693763263704de8d8ba1c37a84172dbe5eb7",
+    "parent": [
+      "fa6f2cc77081792e4edca9168420a3422299ef15"
+    ],
+    "author": {
+      "name": "Jason Baron",
+      "email": "af9bd1db766a43cb09b647251c97dbddcd2e59dc@redhat.com",
+      "time_sec": "1284736140",
+      "tz_offset": "-240",
+      "date": "2010-09-17 15:09:00.000 UTC"
+    },
+    "committer": {
+      "name": "Steven Rostedt",
+      "email": "43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org",
+      "time_sec": "1285187381",
+      "tz_offset": "-240",
+      "date": "2010-09-22 20:29:41.000 UTC"
+    },
+    "subject": "jump label: Base patch for jump label",
+    "message": "jump label: Base patch for jump label\n\nbase patch to implement 'jump labeling'. Based on a new 'asm goto' inline\nassembly gcc mechanism, we can now branch to labels from an 'asm goto'\nstatment. This allows us to create a 'no-op' fastpath, which can subsequently\nbe patched with a jump to the slowpath code. This is useful for code which\nmight be rarely used, but which we'd like to be able to call, if needed.\nTracepoints are the current usecase that these are being implemented for.\n\nAcked-by: David S. Miller <davem@davemloft.net>\nSigned-off-by: Jason Baron <jbaron@redhat.com>\nLKML-Reference: <ee8b3595967989fdaf84e698dc7447d315ce972a.1284733808.git.jbaron@redhat.com>\n\n[ cleaned up some formating ]\n\nSigned-off-by: Steven Rostedt <43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Steven Rostedt <43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org>",
+        "email": "43232e92d70cc7aa53504ad0397085ee47bad87f@goodmis.org"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "Makefile",
+        "new_path": "Makefile",
+        "old_sha1": "92ab33f16cf0a31256b754cf4f1f46fafb83d3a8",
+        "new_sha1": "a906378d505dedd6d86fb427c65d93c82318ed47",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/Kconfig",
+        "new_path": "arch/Kconfig",
+        "old_sha1": "4877a8c8ee1697599289f35107824f95ba8daf84",
+        "new_sha1": "1462d8492d895dbf2f5897192521d48fe2201d11",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/x86/include/asm/alternative.h",
+        "new_path": "arch/x86/include/asm/alternative.h",
+        "old_sha1": "634bf782dca5bf86d9ab8f481d71740d22699821",
+        "new_sha1": "76561d20ea2f27f0edfd0eee6d043b98c6aa6e90",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/x86/kernel/alternative.c",
+        "new_path": "arch/x86/kernel/alternative.c",
+        "old_sha1": "083bd010d92cf6d90bc7f33d408e0102351f6ad0",
+        "new_sha1": "cb0e6d385f6d6e5a78527a738788904a092bc180",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "include/asm-generic/vmlinux.lds.h",
+        "new_path": "include/asm-generic/vmlinux.lds.h",
+        "old_sha1": "8a92a170fb7dfd87710bb26b3c7f384dd6801363",
+        "new_sha1": "ef2af9948eacc9b9f27a706b2febeeb0272b0910",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "include/linux/jump_label.h",
+        "new_path": "include/linux/jump_label.h",
+        "old_sha1": null,
+        "new_sha1": "de58656d28e05a4b9922022c522f403a86466ea5",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "include/linux/module.h",
+        "new_path": "include/linux/module.h",
+        "old_sha1": "8a6b9fdc7ffae0c20335b8a2c73726396a934ee2",
+        "new_sha1": "403ac26023ce05dc9ae25c2d98f2e372e9e85cd1",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "kernel/Makefile",
+        "new_path": "kernel/Makefile",
+        "old_sha1": "0b72d1a74be07c25b99a8da670ec4cfb0963cf77",
+        "new_sha1": "d52b473c99a1765f54897cf212a91abee47f09a7",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "kernel/jump_label.c",
+        "new_path": "kernel/jump_label.c",
+        "old_sha1": null,
+        "new_sha1": "460fd40112b362467efb731b59a2a37d68c0ea94",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "kernel/kprobes.c",
+        "new_path": "kernel/kprobes.c",
+        "old_sha1": "6dd5359e1f0e911103fcc935d8844d253a6ef073",
+        "new_sha1": "18904e42a918dadbfbeda816bcb6f68300349070",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "kernel/module.c",
+        "new_path": "kernel/module.c",
+        "old_sha1": "d0b5f8db11b4a4183c229e2a44f433a99f58090a",
+        "new_sha1": "eba134157ef64c738c24c7eeeafbd3547989633d",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "scripts/gcc-goto.sh",
+        "new_path": "scripts/gcc-goto.sh",
+        "old_sha1": null,
+        "new_sha1": "8e82424be7aa1d1709d5f1829957863b4c6e5e74",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "57475b1a47b3e891ce087ca3c6fc93f5a446a244",
+    "tree": "46a4c03171ffde72121c6be560854f9732c22eff",
+    "parent": [
+      "3e05ec1b93cd839fa1d1a9961b155b0dbc9a4055"
+    ],
+    "author": {
+      "name": "Simon Guinot",
+      "email": "53bf830fa8e82969eaab534c14d8e8b9a7a96894@lacie.com",
+      "time_sec": "1265652514",
+      "tz_offset": "60",
+      "date": "2010-02-08 18:08:34.000 UTC"
+    },
+    "committer": {
+      "name": "Nicolas Pitre",
+      "email": "d659c10e27d52b00987b65e85d99bce5480adcae@fluxnic.net",
+      "time_sec": "1272920598",
+      "tz_offset": "-240",
+      "date": "2010-05-03 21:03:18.000 UTC"
+    },
+    "subject": "[ARM] Kirkwood: merge net2big_v2 and net5big_v2 board setups",
+    "message": "[ARM] Kirkwood: merge net2big_v2 and net5big_v2 board setups\n\nSigned-off-by: Nicolas Pitre <d659c10e27d52b00987b65e85d99bce5480adcae@fluxnic.net>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Nicolas Pitre <d659c10e27d52b00987b65e85d99bce5480adcae@fluxnic.net>",
+        "email": "d659c10e27d52b00987b65e85d99bce5480adcae@fluxnic.net"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/Makefile",
+        "new_path": "arch/arm/mach-kirkwood/Makefile",
+        "old_sha1": "bbb8dd3fa211eae4beb76e7ab9e40234debe80ac",
+        "new_sha1": "c0cd5d362002c325cee09cc8a8c8a59cfaaebf26",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-kirkwood/net2big_v2-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/net2big_v2-setup.c",
+        "old_sha1": "359bb19e366c746f3f437b17c3b71c59268c96e2",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": null,
+        "old_path": "arch/arm/mach-kirkwood/net5big_v2-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/net5big_v2-setup.c",
+        "old_sha1": "f0617ecc8a291123473c98158cb17eacea89dcde",
+        "new_sha1": null,
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": null,
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/netxbig_v2-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/netxbig_v2-setup.c",
+        "old_sha1": null,
+        "new_sha1": "8a2bb0228e4f1d73b26b266d5e9c07bae49049ef",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "1b7bd28cbb1c139147f7338648417e6332af1683",
+    "tree": "a3e3fc08bcc9035e3e063f33850ae89aa3eb13a1",
+    "parent": [
+      "e022c729da8d14e381c04264b07e11d9009d44ed"
+    ],
+    "author": {
+      "name": "Nicolas Pitre",
+      "email": "408789a210b05fb3b46935e815320d62ba00a06e@linaro.org",
+      "time_sec": "1309919893",
+      "tz_offset": "-240",
+      "date": "2011-07-06 02:38:13.000 UTC"
+    },
+    "committer": {
+      "name": "Nicolas Pitre",
+      "email": "d659c10e27d52b00987b65e85d99bce5480adcae@fluxnic.net",
+      "time_sec": "1313961297",
+      "tz_offset": "-240",
+      "date": "2011-08-21 21:14:57.000 UTC"
+    },
+    "subject": "ARM: mach-kirkwood: convert boot_params to atag_offset",
+    "message": "ARM: mach-kirkwood: convert boot_params to atag_offset\n\nSigned-off-by: Nicolas Pitre <408789a210b05fb3b46935e815320d62ba00a06e@linaro.org>\nAcked-by: Arnd Bergmann <f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Nicolas Pitre <408789a210b05fb3b46935e815320d62ba00a06e@linaro.org>",
+        "email": "408789a210b05fb3b46935e815320d62ba00a06e@linaro.org"
+      },
+      {
+        "key": "Acked-by",
+        "value": "Arnd Bergmann <f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de>",
+        "email": "f2c659f01951776204a6c5b902787d9019fbeebd@arndb.de"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/d2net_v2-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/d2net_v2-setup.c",
+        "old_sha1": "043cfd5e140b5d52823c5d429eec5591c3c24742",
+        "new_sha1": "f457e07a65f099bec0a3401ea6445a8b1bd0dd3b",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/db88f6281-bp-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/db88f6281-bp-setup.c",
+        "old_sha1": "bff04e04d6792b53fcd8b42f4b819e3be0110adf",
+        "new_sha1": "ff4c21c1f923ebfcb110fd61a097b955f4b49b15",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/dockstar-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/dockstar-setup.c",
+        "old_sha1": "f14dfb8508c5fd48ee9a616a6d4e37fbbb294f8d",
+        "new_sha1": "e4d199b2b1e8f866bc4ae88feefb5f2a43154509",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/guruplug-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/guruplug-setup.c",
+        "old_sha1": "41d1b40696a38d91ec8f7ab46d3f5c23f072a2e5",
+        "new_sha1": "6c40f784b5169d8029888ba49e7bf593f9adf485",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/mv88f6281gtw_ge-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/mv88f6281gtw_ge-setup.c",
+        "old_sha1": "00cca22eca6f733f19e36c397060e9565fb832c8",
+        "new_sha1": "9a1e917352f77e2679469d9016c51930008d337c",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/netspace_v2-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/netspace_v2-setup.c",
+        "old_sha1": "7cdab5776452a4929e591e36eb1f380b316f119e",
+        "new_sha1": "8849bcc7328e7db1bbb7c8a5e9f6e7b5c0885883",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/netxbig_v2-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/netxbig_v2-setup.c",
+        "old_sha1": "6be627deb0fccb0228422a81b64da39c70bda56e",
+        "new_sha1": "1ba12c4dff8f31276b11b51e5cd8480cfa6c76be",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/openrd-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/openrd-setup.c",
+        "old_sha1": "f69beeff4450b5c9d604346ee063494480304cdc",
+        "new_sha1": "5660ca6c3d888ec6384e74c6b9eac7aee4439971",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/rd88f6192-nas-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/rd88f6192-nas-setup.c",
+        "old_sha1": "75c6601b8d870390f4a331bb80a9cf8e0bea0b22",
+        "new_sha1": "6663869773abaa7d27825462739ecb1012cb5e52",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/rd88f6281-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/rd88f6281-setup.c",
+        "old_sha1": "0f75494d59021655b4cf8e7ed2065f916ffb6499",
+        "new_sha1": "66b3c05e37a6f7f6413d39ca322e644b8e6de7eb",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/sheevaplug-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/sheevaplug-setup.c",
+        "old_sha1": "17de0bf53c08d72cd7a9c96ea36f7bf8e070f001",
+        "new_sha1": "8b102d62e82c7b7a3a5e2fb6dde9c7393e13171e",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/t5325-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/t5325-setup.c",
+        "old_sha1": "e6b9b1b22a35d1202823578e819b461c50163977",
+        "new_sha1": "ea104fb5ec3d9317fd01d3e62462f2b6e019966f",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/ts219-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/ts219-setup.c",
+        "old_sha1": "68f32f2bf552bb1ef18d9c8f18521f32ee702d2e",
+        "new_sha1": "262c034836d47b493d185a8ac681c6637cc68e5a",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "arch/arm/mach-kirkwood/ts41x-setup.c",
+        "new_path": "arch/arm/mach-kirkwood/ts41x-setup.c",
+        "old_sha1": "d5d0099707051c5ed471cb1fa546e1337afb4d42",
+        "new_sha1": "b68f5b4a9ec87696c4283a55dc7e87f199599d27",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+,
+  {
+    "commit": "84d02150dea7571dc32176e35d65eecde82631a9",
+    "tree": "0d2fe61c71db6eee07f7610eaf6d681f6dec56f3",
+    "parent": [
+      "2c590d5fb6987e6579a82285b742a318cc1fdb50"
+    ],
+    "author": {
+      "name": "Mike Marshall",
+      "email": "76d986def7a933c047b8ea2600653790ab27bf63@omnibond.com",
+      "time_sec": "1438104471",
+      "tz_offset": "-240",
+      "date": "2015-07-28 17:27:51.000 UTC"
+    },
+    "committer": {
+      "name": "Mike Marshall",
+      "email": "76d986def7a933c047b8ea2600653790ab27bf63@omnibond.com",
+      "time_sec": "1443886802",
+      "tz_offset": "-240",
+      "date": "2015-10-03 15:40:02.000 UTC"
+    },
+    "subject": "Orangefs: sooth most sparse complaints",
+    "message": "Orangefs: sooth most sparse complaints\n\nSigned-off-by: Mike Marshall <76d986def7a933c047b8ea2600653790ab27bf63@omnibond.com>\n",
+    "trailer": [
+      {
+        "key": "Signed-off-by",
+        "value": "Mike Marshall <76d986def7a933c047b8ea2600653790ab27bf63@omnibond.com>",
+        "email": "76d986def7a933c047b8ea2600653790ab27bf63@omnibond.com"
+      }
+    ],
+    "difference": [
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/orangefs/devpvfs2-req.c",
+        "new_path": "fs/orangefs/devpvfs2-req.c",
+        "old_sha1": "7e60fd047f285591ab48224a581ff7e409ad4453",
+        "new_sha1": "13878cac49ed3716cdbae58c89881fcee985f4ef",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/orangefs/file.c",
+        "new_path": "fs/orangefs/file.c",
+        "old_sha1": "8e26f9fac289df8f1cc43577756fbaafd62c47d9",
+        "new_sha1": "4ba1b6c48aa71e6434ab459d09343936ac042497",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/orangefs/inode.c",
+        "new_path": "fs/orangefs/inode.c",
+        "old_sha1": "feda00fcdd7d369b220bc0716e1c80f30240ded7",
+        "new_sha1": "9ff6b2985240fc070a368bf2b991b359766f4e59",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/orangefs/protocol.h",
+        "new_path": "fs/orangefs/protocol.h",
+        "old_sha1": "8e0c8a6158f77bbf85d5e815331d15b2b7dab41f",
+        "new_sha1": "ca7cef9590d3fde6ae6b61dfedc9447fb7c4fad7",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/orangefs/pvfs2-bufmap.c",
+        "new_path": "fs/orangefs/pvfs2-bufmap.c",
+        "old_sha1": "aa14c37d0216a6d098fecf115eb1e2182e858379",
+        "new_sha1": "a439163f8d7c422765779f50d3154b1235d56c1b",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/orangefs/pvfs2-debugfs.c",
+        "new_path": "fs/orangefs/pvfs2-debugfs.c",
+        "old_sha1": "8d118da9b88f6506913d6518fa39639e0e8dddc5",
+        "new_sha1": "ba5bfef7a3f3fbe01af28745dfe3ddbcb860cd3c",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/orangefs/pvfs2-kernel.h",
+        "new_path": "fs/orangefs/pvfs2-kernel.h",
+        "old_sha1": "6c787c4797d0d94046d8104c4e3df1c64f30eee6",
+        "new_sha1": "be30111b40d2f7c6bc5b0b4cecf32c494a56216b",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/orangefs/pvfs2-mod.c",
+        "new_path": "fs/orangefs/pvfs2-mod.c",
+        "old_sha1": "9cbc992731d69e3eab985ca729daab759cf10b89",
+        "new_sha1": "69289c5d838c79c8f1ffe7a3d7f41c89921c1247",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/orangefs/pvfs2-sysfs.c",
+        "new_path": "fs/orangefs/pvfs2-sysfs.c",
+        "old_sha1": "6d0e18b7239fac652540f85d588105cf2e1c673b",
+        "new_sha1": "ea635b5e431b4d7b855ad463d693c7296fea9ba9",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/orangefs/super.c",
+        "new_path": "fs/orangefs/super.c",
+        "old_sha1": "a854390fc0ea6cef43d8a3876af19bc1ea18a541",
+        "new_sha1": "90c7a1c9f2011a05296b27af842bf9d72ad299d9",
+        "old_repo": null,
+        "new_repo": null
+      },
+      {
+        "old_mode": "33188",
+        "new_mode": "33188",
+        "old_path": "fs/orangefs/waitqueue.c",
+        "new_path": "fs/orangefs/waitqueue.c",
+        "old_sha1": "9b32286a7dc48dc50b7b20492db0ca06398953b9",
+        "new_sha1": "ad79e534dc8e9a903a4e01d4a7a40bcb721d627b",
+        "old_repo": null,
+        "new_repo": null
+      }
+    ],
+    "difference_truncated": null,
+    "repo_name": "torvalds/linux",
+    "encoding": null
+  }
+]
+
