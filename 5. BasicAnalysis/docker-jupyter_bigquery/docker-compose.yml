@@ -1,0 +1,10 @@
+version: "2"
+services:
+  spark-bigquery:
+    build: .
+    ports:
+      - 8888:8888
+      - 4040:4040
+    volumes:
+      - ./data:/home/jovyan/work
+    tty: true
