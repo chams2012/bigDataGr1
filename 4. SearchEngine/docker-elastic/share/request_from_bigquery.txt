@@ -1,0 +1,14 @@
+SELECT
+  fil.repo_name AS repo_name,
+  REGEXP_EXTRACT(fil.path, r'([^\/]*\w$)') AS file,
+  REGEXP_EXTRACT(fil.path, r'\.([^.]*\w$)') AS language,
+  com.committer.date AS commit_date,
+  con.content AS content,
+  com.subject AS subject,
+  com.message AS message
+FROM [bigquery-public-data:github_repos.files] AS fil
+JOIN [bigquery-public-data:github_repos.contents] AS con ON con.id = fil.id
+JOIN FLATTEN([bigquery-public-data:github_repos.commits], difference) AS com ON com.difference.new_path = fil.path
+WHERE (con.binary == FALSE) AND (content != "") AND (fil.path != '.gitignore') AND (REGEXP_EXTRACT(fil.path, r'([^\/]*\w$)') != 'BUILD')
+ORDER BY date DESC
+LIMIT 10000
