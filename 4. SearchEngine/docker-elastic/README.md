@@ -20,11 +20,14 @@
 	- URL : http://localhost:9200/_bulk
 	- Body : binary + sélect fichiers (github_commits.json)
 	
-> Pour chercher
+> Pour chercher tout :
 	http://localhost:9200/github_commits/commit/_search
 	
-> Pour chercher par language :
-	http://localhost:9200/github_commits/q_search?q.fields.language:cpp
+> Pour chercher tous les répertoires Git :
+	http://localhost:9200/github_commits/_search?q=repo_name:*
 	
-> Pour chercher par contenu :
-	http://localhost:9200/github_commits/q_search?q.fields.contenu:warning
+> Pour chercher par language (language=swift) :
+	http://localhost:9200/github_commits/_search?q=language:swift
+	
+> Pour chercher par contenu (warning):
+	http://localhost:9200/github_commits/_search?q=content:warning
