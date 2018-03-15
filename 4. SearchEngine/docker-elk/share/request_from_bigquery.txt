@@ -1,0 +1,32 @@
+SELECT
+  fil.repo_name AS repo_name,
+  REGEXP_EXTRACT(fil.path, r'([^\/]*\w$)') AS file,
+  REGEXP_EXTRACT(fil.path, r'\.([^.]*\w$)') AS language,
+  STRFTIME_UTC_USEC(com.committer.date, '%Y-%m-%dT%H:%M:%S') AS commit_date,
+  con.content AS content,
+  com.subject AS subject,
+  com.message AS message
+FROM
+  [ornate-woodland-196220:github_demo.files] AS fil
+JOIN
+  [ornate-woodland-196220:github_demo.contents] AS con
+ON
+  con.id = fil.id
+JOIN
+  FLATTEN([ornate-woodland-196220:github_demo.commits], difference) AS com
+ON
+  com.difference.new_path = fil.path
+WHERE
+  (con.binary == FALSE)
+  AND (content != "")
+  AND (fil.path != '.gitignore')
+  AND (REGEXP_EXTRACT(fil.path, r'([^\/]*\w$)') != 'BUILD')
+  AND fil.repo_name IN ('tensorflow/tensorflow',
+    'torvalds/linux',
+    'facebook/react',
+    'apple/swift',
+    'Microsoft/vscode',
+    'twbs/bootstrap')
+
+
+Résultat : 139.0s elapsed, 910 MB

@@ -1,0 +1,85 @@
+{
+	"mappings": {
+		"commit": {
+			"properties": {
+				"fields" : {
+					"properties": {
+						"repo_name": {
+							"type": "string",
+							"fields" : {
+								"raw" : {
+									"type" : "string",
+									"index" : "not_analyzed"
+								}
+							}
+						},
+						"file": {
+							"type": "string",
+							"fields" : {
+								"raw" : {
+									"type" : "string",
+									"index" : "not_analyzed"
+								}
+							}
+						},
+						"language": {
+							"type": "string",
+							"fields" : {
+								"raw" : {
+									"type" : "string",
+									"index" : "not_analyzed"
+								}
+							}
+						},
+						"commit_date": {
+							"type": "date",
+							"fields" : {
+								"raw" : {
+									"type" : "date",
+									"format": "yyyy-MM-dd HH:mm:ss.SSS zzz",
+									"index" : "not_analyzed"
+								}
+							}
+						},
+						"content": {
+							"type": "text",
+							"fields" : {
+								"raw" : {
+									"type" : "string",
+									"index" : "not_analyzed"
+								}
+							}
+						},
+						"subject": {
+							"type": "text",
+							"fields" : {
+								"raw" : {
+									"type" : "string",
+									"index" : "not_analyzed"
+								}
+							}
+						},
+						"message": {
+							"type": "text",
+							"fields" : {
+								"raw" : {
+									"type" : "string",
+									"index" : "not_analyzed"
+								}
+							}
+						}
+					}
+				},
+				"type" : {
+					"type" : "text",
+					"fields" : {
+						"keyword" : {
+							"type" : "keyword",
+							"ignore_above" : 256
+						}
+					}
+				}
+			}
+		}
+	}
+}

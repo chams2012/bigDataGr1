@@ -1,0 +1,37 @@
+version: '3.1'
+
+services:
+
+  elasticsearch:
+    image: elasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300
+      
+  kibana:
+    image: kibana
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch:elasticsearch
+
+  logstash:
+    image: logstash
+    expose:
+      - 12201
+    ports:
+      - 12201:12201
+      - "12201:12201/udp"
+    volumes:
+      - ./conf:/conf
+      - ./data:/tmp/data
+    links:
+      - elasticsearch:elasticsearch
+    #healthcheck:
+        #test: ["CMD", "curl", "-f", "http://127.0.0.1:9200"]
+        #interval: 30s
+        #timeout: 10s
+        #retries: 10
+    command: logstash --verbose -f /conf/logstash.conf
+
+ 
