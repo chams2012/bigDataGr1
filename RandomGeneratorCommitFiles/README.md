@@ -28,7 +28,7 @@ Exécuter le scipt suivant :
 Exécuter le scipt suivant : ```./run-consumer-group.sh```
 8. en cours 
 9. en cours
-
-## Methode Rapide
+ 
+## Methode Rapide :
 1. Lancement de tous les serveurs avec création du topic "topiccommit"
 Exécuter le scipt suivant : ```./runAll3Servers.sh```
