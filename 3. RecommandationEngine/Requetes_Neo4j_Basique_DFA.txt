@@ -1,0 +1,215 @@
+
+              Des exemples de requêtes sous Néo4J
+			  
+			           Requêtes Basiques
+					   
+			            Groupe 1 : DFA
+
+/*---------------------------------------------------------------*/
+/*                                                               */
+/*                  Dénombrement enregistrements                 */
+/*                                                               */
+/*---------------------------------------------------------------*/
+
+MATCH (A:actor)
+RETURN count(DISTINCT A) as NbActor
+
+MATCH (D:Document)
+RETURN count(DISTINCT D) as NbDoc
+
+MATCH (G:githubarchive)
+RETURN count(DISTINCT G) as NbGithub
+
+MATCH (V:gravatar)
+RETURN count(DISTINCT V) as NbGrava
+
+MATCH (O:org)
+RETURN  O ,count(DISTINCT O) as NbOrg
+
+MATCH (R:repo)
+RETURN count(DISTINCT R) as NbRepo
+
+/*---------------------------------------------------------------*/
+/*                                                               */
+/*                        Valeurs distinctes                     */
+/*                                                               */
+/*---------------------------------------------------------------*/
+
+
+MATCH (A:actor)
+RETURN A.id, A.login, count(*) as CompteurA
+
+MATCH (G:githubarchive)
+RETURN G.type, G.id ,count(*) as CompteurG
+
+#MATCH (G:githubarchive)
+#RETURN DISTINCT G.type, G.id ,count(*) as CompteurDG
+
+MATCH (R:repo)
+RETURN R ,count(*) as CompteurR
+
+MATCH (R:repo)
+RETURN DISTINCT R.name, R.id ,count(*) as CompteurDR
+
+/*---------------------------------------------------------------*/
+/*                                                               */
+/*                   liste des enregistrements                   */
+/*                                                               */
+/*---------------------------------------------------------------*/
+
+MATCH (A:actor)
+RETURN A
+
+MATCH (D:Document)
+RETURN D
+
+MATCH (G:githubarchive)
+RETURN G
+
+MATCH (V:gravatar)
+RETURN V
+
+MATCH (O:org)
+RETURN O
+
+MATCH (R:repo)
+RETURN R
+
+/*---------------------------------------------------------------*/
+/*---------------------------------------------------------------*/
+
+MATCH (D:Document)
+WITH D.name AS nom, D.id AS id, D._id AS idL, D.url AS url, D._ts AS ts, D.other AS Info
+return nom, id, idL, url, ts, Info
+
+MATCH (G:githubarchive)
+WITH G.other AS Info, G.public AS public, G.payload AS charge, G.id AS id, G._id AS idL , G._ts AS ts ,G.type AS type
+RETURN Info, public, COLLECT(charge), id, idL, ts, type LIMIT 5
+
+#MATCH (G:githubarchive)
+#WITH G.other AS Info, G.public AS public, G.payload AS charge, G.id AS id, G._id AS idL , G._ts AS ts ,G.type AS type
+#UNWIND charge AS test
+#RETURN Info, public, test, id, idL, ts, type LIMIT 5
+
+/*---------------------------------------------------------------*/
+/*                     Simple relation                           */
+/*---------------------------------------------------------------*/
+
+MATCH (G:githubarchive)-[GR:githubarchive_repo]-(R:repo)
+RETURN G.type, R.name, count(*) as CompteurTN
+
+MATCH (G:githubarchive)-[GR:githubarchive_actor]-(A:actor)
+RETURN G.type, A.id, count(*) as CompteurTI
+
+/*---------------------------------------------------------------*/
+/*                       Double relations                        */
+/*---------------------------------------------------------------*/
+* Version 1
+MATCH (R:repo)-[GR:githubarchive_repo]-(G:githubarchive)-[GA:githubarchive_actor]-(A:actor)
+RETURN R.name, G.type, A.login, count(*) as CompteurNTL
+
+
+* Version 2
+MATCH (R:repo)-[GR:githubarchive_repo]-(G:githubarchive)-[GA:githubarchive_actor]-(A:actor)
+WITH  R.name AS Repo,G.type AS Type, A.login AS Nom, count(*) AS CompteurNTL
+WHERE CompteurNTL > 1 AND Type="WatchEvent"
+RETURN Repo, Type, Nom , CompteurNTL
+
+MATCH (R:repo)-[GR:githubarchive_repo]-(G:githubarchive)-[GA:githubarchive_actor]-(A:actor)
+WITH  R.name AS Repo,G.type AS Type, A.login AS Nom, count(*) AS CompteurNTL
+WHERE CompteurNTL > 1 AND Type="ForkEvent"
+RETURN Repo, Type, Nom , CompteurNTL
+
+MATCH (R:repo)-[GR:githubarchive_repo]-(G:githubarchive)-[GA:githubarchive_actor]-(A:actor)
+WITH  R.name AS Repo,G.type AS Type, A.login AS Nom, count(*) AS CompteurNTL
+WHERE CompteurNTL > 1 AND Type="IssueCommentEvent"
+RETURN Repo, Type, Nom , CompteurNTL
+
+
+MATCH (R:repo)-[GR:githubarchive_repo]-(G:githubarchive)-[GA:githubarchive_actor]-(A:actor)
+WITH  R.name AS Repo,G.type AS Type, A.login AS Nom, count(*) AS CompteurNTL
+WHERE CompteurNTL > 1 AND Type="PullRequestEvent"
+RETURN Repo, Type, Nom , CompteurNTL
+
+MATCH (R:repo)-[GR:githubarchive_repo]-(G:githubarchive)-[GA:githubarchive_actor]-(A:actor)
+WITH  R.name AS Repo,G.type AS Type, A.login AS Nom, count(*) AS CompteurNTL
+WHERE CompteurNTL > 1 AND Type="PushEvent"
+RETURN Repo, Type, Nom , CompteurNTL
+
+/*---------------------------------------------------------------*/
+/*                    Recherche de Graph                         */
+/*---------------------------------------------------------------*/
+
+MATCH (G:githubarchive)-[GR:githubarchive_repo]->(R:repo)
+RETURN G, GR, R  LIMIT 25
+
+
+MATCH (R:repo)-[GR:githubarchive_repo]-(G:githubarchive)-[GA:githubarchive_actor]-(A:actor)
+RETURN  R , GR , G , GA , A LIMIT 25 
+
+/*---------------------------------------------------------------*/
+/*                                                               */
+/*         1er élément pour une première recommandation          */
+/*                                                               */
+/*---------------------------------------------------------------*/
+/*                                                               */
+/*Typiquement, si l’user X participe au projet a, b et c. Que le */
+/*user Y participe à a, b et d. On pourrait proposer par exemple */
+/*au user X de participer au projet d…                           */
+/*Grâce à cet outil, on permettrait à la communauté de prendre   */
+/*part à plus de projets, d’en découvrir d’autres…               */
+/*                                                               */
+/*---------------------------------------------------------------*/
+
+MATCH (A1:actor)- [GA1:githubarchive_actor] - (G1:githubarchive) - [GR1:githubarchive_repo] - (R1:repo),
+      (A2:actor)- [GA2:githubarchive_actor] - (G2:githubarchive) - [GR2:githubarchive_repo] - (R2:repo)
+WITH  G1.type AS Type1, count(*) AS Cpt1LTN, A1.login AS Acteur1, R1.name AS Repo1, count(DISTINCT R1.name) AS Cpt1R,
+      G2.type AS Type2, count(*) AS Cpt2LTN, A2.login AS Acteur2, R2.name AS Repo2, count(DISTINCT R2.name) AS Cpt2R
+WHERE Type1="PushEvent" AND Type2="PushEvent" 
+RETURN  Acteur1 , Repo1 , Cpt1LTN , Cpt1R, Acteur2 , Repo2 , Cpt2LTN , Cpt2R  LIMIT 25
+
+??? J'ai des difficultés à aller plus loin car je ne peux pas 
+tester mes requêtes ...........................................???
+
+
+/*---------------------------------------------------------------*/
+/*                                                               */
+/*                  une seconde recommandation                   */
+/*                                                               */
+/*---------------------------------------------------------------*/
+/*                                                               */
+/* Evidemment, on voudrait pouvoir avoir des recommandations sur */
+/* un langage donné, sur une popularité minimale donnée          */
+/* (au moins k stars ?).                                         */
+/*                                                               */
+/*---------------------------------------------------------------*/
+
+??? Je ne sais pas où trouver le champs "langage" ..............???
+
+/*---------------------------------------------------------------*/
+/*                                                               */
+/*                 une troisième recommandation                  */
+/*                                                               */
+/*---------------------------------------------------------------*/
+/*                                                               */
+/*Evidemment, on voudrait utiliser notre moteur de recommandation*/
+/*Evidemment, on voudrait utiliser notre moteur de recommandation*/
+/*pour recommander des projets à des personnes qui ne veulent pas*/
+/*forcément y contribuer mais juste les starrer éventuellement et*/
+/*du coup en découvrir d’autres ! On entrevoit que plusieurs     */
+/*types de relations entre un user et un repository peuvent      */
+/*exister. On peut bien sûr être à la fois contributeur du projet*/
+/*x et starreur du projet y.                                     */
+/*                                                               */
+/*---------------------------------------------------------------*/
+
+??? A priori, c'est une généralisation de la première 
+généralisation .................................................???
+ 
+ 
+
+
+ 
+ 
+
+ 
