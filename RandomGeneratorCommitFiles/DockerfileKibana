@@ -1,0 +1,3 @@
+FROM kibana
+#RUN apt-get update && apt-get install -y nano
+COPY share_kibana/kibana.yml /etc/kibana/kibana.yml

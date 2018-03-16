@@ -1,0 +1,6 @@
+kafka-python
+pymongo
+numpy
+scipy
+scikit-learn
+python-dateutil

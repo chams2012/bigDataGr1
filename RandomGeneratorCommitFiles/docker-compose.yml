@@ -1,0 +1,18 @@
+version: '2'
+services:
+   mongobase:
+    image : mongoimg
+    ports:
+      - 27017:27017
+      - 27018:27018
+      - 27019:27019
+    volumes:
+      - /media/nour/Data/db:/data/db
+      - ./share_mongo:/tmp/share
+   producer:
+    image : pythonimg
+    ports:
+      - 9999:9999
+    volumes:
+      - ./share_producer:/myData
+    tty: true
