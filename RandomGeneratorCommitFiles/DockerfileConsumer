@@ -1,58 +1,27 @@
-FROM ubuntu:16.04
-MAINTAINER  version 1.0
+FROM openjdk:8-jre-alpine
 
+ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
+    JHIPSTER_SLEEP=0 \
+    JAVA_OPTS=""
 
-RUN apt-get update
-RUN apt-get install apt-utils -y
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
-
-
-# moins interactif possible
-ENV DEBIAN_FRONTEND noninteractive
-
-# A mettre avant l'installation de locales
-RUN echo "locales locales/default_environment_locale select fr_FR.UTF-8" | debconf-set-selections \
-    && echo "locales locales/locales_to_be_generated multiselect 'fr_FR.UTF-8 UTF-8'" | debconf-set-selections
-
-#utilitaires
-#RUN apt-get install adduser curl nano wget debconf-utils dialog locales --yes
-
-RUN apt-get install nano debconf-utils dialog locales --yes
-
-
-RUN apt-get update && apt-get install tzdata
-# supression de l'anglais
-RUN echo "Europe/Paris" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata && locale-gen --purge en_US.UTF-8
-
-# install java 8
-RUN apt-get update
-RUN apt-get install dialog apt-utils -y
-RUN apt-get -y install software-properties-common
-RUN add-apt-repository -y ppa:webupd8team/java
-RUN echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
-RUN echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
-RUN apt-get update
-RUN apt-get -y install oracle-java8-installer
-
-
-#install python 3
-RUN apt-get update \
-  && apt-get install -y python3-pip python3-dev \
-  && cd /usr/local/bin \
-  && ln -s /usr/bin/python3 python \
-  && pip3 install --upgrade pip
-
+CMD echo "The application will start in ${JHIPSTER_SLEEP}s..." && \
+    sleep ${JHIPSTER_SLEEP} && \
+    java ${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -jar /app.war
 
 # Definir le dossier de travail
-WORKDIR /myData
+#WORKDIR /myData
 
 #copier mes dossiers
-ADD share_producer /myData
-ADD share_consumer /myData
+#ADD share_producer /myData
+#ADD share_consumer /myData
 
 # Definir JAVA_HOME variable
-ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+#ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
+
+EXPOSE 9876
+
+#ADD *.war /app.war
 
 # Define default command.
 CMD ["/bin/bash"]

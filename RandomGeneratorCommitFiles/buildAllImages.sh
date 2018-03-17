@@ -41,7 +41,7 @@ fi
 if [ -z "$(docker images -q $image_consumer)" ]; 
 then
     echo "$image_consumer n'existe pas, en  cours de construction .."
-    sudo docker build -t $image_consumer --file DockerConsumer . 
+    sudo docker build -t $image_consumer --file DockerfileConsumer . 
 else
 echo "$image_consumer exist déja"
 fi
