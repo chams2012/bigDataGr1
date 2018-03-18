@@ -1,0 +1,125 @@
+> 6 répertoires :
+------------------
+
+1. 'tensorflow/tensorflow',	 
+2. 'torvalds/linux',
+3. 'facebook/react',	 
+4. 'apple/swift',	 
+5. 'Microsoft/vscode',	 
+6. 'twbs/bootstrap'
+7. 'FreeCodeCamp/FreeCodeCamp'
+_________________________________________________________________________________________________________________________________________________________________
+
+> githubarchive sur les 3 dernières années :
+> Legacy Query
+---------------------------------------------
+
+SELECT
+  *
+FROM
+  [githubarchive:month.201803],
+  [githubarchive:month.201802],
+  [githubarchive:month.201801],
+  [githubarchive:year.2017],
+  [githubarchive:year.2016]
+WHERE
+  repo.name IN ( 'tensorflow/tensorflow',
+    'facebook/react',
+    'twbs/bootstrap',
+    'apple/swift',
+    'Microsoft/vscode',
+    'torvalds/linux',
+	'FreeCodeCamp/FreeCodeCamp')
+	
+_________________________________________________________________________________________________________________________________________________________________
+
+> Table "files" :
+> Legacy Query
+---------------------------------------------
+
+SELECT
+  *
+FROM
+  [bigquery-public-data:github_repos.files] f
+
+WHERE
+  f.repo_name IN ('tensorflow/tensorflow',
+    'torvalds/linux',
+    'facebook/react',
+    'apple/swift',
+    'Microsoft/vscode',
+    'twbs/bootstrap',
+	'FreeCodeCamp/FreeCodeCamp')
+	
+_________________________________________________________________________________________________________________________________________________________________
+
+> Table "contents" :
+> Legacy Query
+---------------------------------------------
+
+SELECT
+  c.id id,
+  c.size size,
+  c.content content,
+  c.binary binary,
+  c.copies copies,
+FROM
+  [bigquery-public-data:github_repos.files] f
+JOIN (
+  SELECT
+    *
+  FROM
+    [bigquery-public-data:github_repos.contents] ) c
+ON
+  f.id = c.id
+WHERE
+  f.repo_name IN ('tensorflow/tensorflow',
+    'torvalds/linux',
+    'facebook/react',
+    'apple/swift',
+    'Microsoft/vscode',
+    'twbs/bootstrap',
+	'FreeCodeCamp/FreeCodeCamp')
+
+_________________________________________________________________________________________________________________________________________________________________
+
+> Table "commits" :
+> Standard Query + Batch + Destination Table + Allow Large Option
+------------------------------------------------------------------
+
+ 
+SELECT
+  * EXCEPT(repo_name)
+FROM
+  `bigquery-public-data.github_repos.commits` AS comm,
+  UNNEST(comm.repo_name) AS repo_demo
+WHERE
+  repo_demo IN ('tensorflow/tensorflow',
+    'torvalds/linux',
+    'facebook/react',
+    'apple/swift',
+    'Microsoft/vscode',
+    'twbs/bootstrap')
+
+
+_________________________________________________________________________________________________________________________________________________________________
+
+> Table "commits" :
+> Legacy Query + Batch + Destination Table + Allow Large Option
+------------------------------------------------------------------
+  
+SELECT
+  * EXCEPT(repo_name, repo_demo), repo_demo AS repo_name
+FROM
+  `bigquery-public-data.github_repos.commits` AS comm,
+  UNNEST(comm.repo_name) AS repo_demo
+WHERE
+  repo_demo IN ('tensorflow/tensorflow',
+    'torvalds/linux',
+    'facebook/react',
+    'apple/swift',
+    'Microsoft/vscode',
+    'twbs/bootstrap')
+ORDER BY committer.date DESC
+  
+  
