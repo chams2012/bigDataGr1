@@ -1,0 +1,430 @@
+
+              Des exemples de requêtes sous Kibana
+			  
+			           Requêtes Basiques
+					   
+			            Groupe 1 : DFA
+
+# Construction d’un moteur de recherche
+
+On trouve le moteur de recherche de Github pas terrible. On 
+voudrait pouvoir chercher en mode plein texte sur le contenu 
+des fichiers et sur les commentaires 
+des commits, notamment. Evidemment on veut avoir des notions 
+de pertinence qui interviennent.
+
+Les fichiers binaires ne nous intéressent évidemment pas dans 
+cette recherche et il convient de ne pas les insérer (...)
+
+On voudrait pouvoir utiliser des facettes par langage pour une
+ requête donnée. Et ce serait bien si le moteur de recherche 
+ proposait une interface où on 
+pourrait évidemment rechercher mais aussi pourquoi pas avoir un
+ dashboard avec le nombre de fichiers créés sur les 15 dernières 
+ minutes, le nombre de commits 
+contenant certains termes lors des 15 dernières minutes, par 
+langages principaux (...)
+
+
+/*---------------------------------------------------------------*/
+/*                             1 er                              */
+/*                                                               */
+/*                            Langage                            */
+/*                            Courbe                             */
+/*---------------------------------------------------------------*/
+
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "query_string": {
+          "query": "*",
+          "analyze_wildcard": true
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "query": {
+                "query_string": {
+                  "analyze_wildcard": true,
+                  "query": "*"
+                }
+              }
+            },
+            {
+              "range": {
+                "commit_date": {
+                  "gte": 1363554952381,
+                  "lte": 1521321352381,
+                  "format": "epoch_millis"
+                }
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    }
+  },
+  "size": 0,
+  "aggs": {
+    "2": {
+      "terms": {
+        "field": "language",
+        "size": 10,
+        "order": {
+          "_count": "desc"
+        }
+      }
+    }
+  }
+
+/*---------------------------------------------------------------*/
+/*                             2 ème                             */
+/*                                                               */
+/*                        Repo x Langage                         */
+/*                            Tableau                            */
+/*---------------------------------------------------------------*/
+
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "query_string": {
+          "query": "*",
+          "analyze_wildcard": true
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "query": {
+                "query_string": {
+                  "analyze_wildcard": true,
+                  "query": "*"
+                }
+              }
+            },
+            {
+              "range": {
+                "commit_date": {
+                  "gte": 1363646218062,
+                  "lte": 1521412618062,
+                  "format": "epoch_millis"
+                }
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    }
+  },
+  "size": 0,
+  "aggs": {
+    "2": {
+      "terms": {
+        "field": "repo_name",
+        "size": 10,
+        "order": {
+          "_count": "desc"
+        }
+      },
+      "aggs": {
+        "3": {
+          "terms": {
+            "field": "language",
+            "size": 5,
+            "order": {
+              "_count": "desc"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+/*---------------------------------------------------------------*/
+/*                             3 ème                             */
+/*                                                               */
+/*                         File x Langage                        */
+/*                            Histo                              */
+/*---------------------------------------------------------------*/
+
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "query_string": {
+          "query": "*",
+          "analyze_wildcard": true
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "query": {
+                "query_string": {
+                  "analyze_wildcard": true,
+                  "query": "*"
+                }
+              }
+            },
+            {
+              "range": {
+                "commit_date": {
+                  "gte": 1363646218062,
+                  "lte": 1521412618062,
+                  "format": "epoch_millis"
+                }
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    }
+  },
+  "size": 0,
+  "aggs": {
+    "2": {
+      "terms": {
+        "field": "file",
+        "size": 5,
+        "order": {
+          "_count": "desc"
+        }
+      },
+      "aggs": {
+        "3": {
+          "terms": {
+            "field": "language",
+            "size": 10,
+            "order": {
+              "_count": "desc"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/*---------------------------------------------------------------*/
+/*                             4 ème                             */
+/*                                                               */
+/*                        Temps x Langage                        */
+/*                            Courbe                             */
+/*---------------------------------------------------------------*/
+
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "query_string": {
+          "query": "*",
+          "analyze_wildcard": true
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "query": {
+                "query_string": {
+                  "analyze_wildcard": true,
+                  "query": "*"
+                }
+              }
+            },
+            {
+              "range": {
+                "commit_date": {
+                  "gte": 1363646218062,
+                  "lte": 1521412618062,
+                  "format": "epoch_millis"
+                }
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    }
+  },
+  "size": 0,
+  "aggs": {
+    "2": {
+      "date_histogram": {
+        "field": "commit_date",
+        "interval": "1w",
+        "time_zone": "Europe/Berlin",
+        "min_doc_count": 1,
+        "extended_bounds": {
+          "min": 1363646218058,
+          "max": 1521412618058
+        }
+      },
+      "aggs": {
+        "3": {
+          "terms": {
+            "field": "language",
+            "size": 10,
+            "order": {
+              "_count": "desc"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/*---------------------------------------------------------------*/
+/*                             5 ème                             */
+/*                                                               */
+/*                        Message x Langage                      */
+/*                            Courbe                             */
+/*---------------------------------------------------------------*/
+
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "query_string": {
+          "analyze_wildcard": true,
+          "query": "*"
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "query": {
+                "query_string": {
+                  "analyze_wildcard": true,
+                  "query": "*"
+                }
+              }
+            },
+            {
+              "range": {
+                "commit_date": {
+                  "gte": 1363646218062,
+                  "lte": 1521412618062,
+                  "format": "epoch_millis"
+                }
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    }
+  },
+  "size": 0,
+  "aggs": {
+    "2": {
+      "terms": {
+        "field": "message",
+        "size": 5,
+        "order": {
+          "_count": "desc"
+        }
+      },
+      "aggs": {
+        "3": {
+          "terms": {
+            "field": "language",
+            "size": 5,
+            "order": {
+              "_count": "desc"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+/*---------------------------------------------------------------*/
+/*                             6 ème                             */
+/*                                                               */
+/*                   Temps x Message="warning"                   */
+/*                            Courbe                             */
+/*---------------------------------------------------------------*/
+
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "query_string": {
+          "analyze_wildcard": true,
+          "query": "*"
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "query": {
+                "query_string": {
+                  "analyze_wildcard": true,
+                  "query": "*"
+                }
+              }
+            },
+            {
+              "range": {
+                "commit_date": {
+                  "gte": 1363646218062,
+                  "lte": 1521412618062,
+                  "format": "epoch_millis"
+                }
+              }
+            }
+          ],
+          "must_not": []
+        }
+      }
+    }
+  },
+  "size": 0,
+  "aggs": {
+    "2": {
+      "date_histogram": {
+        "field": "commit_date",
+        "interval": "1M",
+        "time_zone": "Europe/Berlin",
+        "min_doc_count": 1,
+        "extended_bounds": {
+          "min": 1363646218060,
+          "max": 1521412618060
+        }
+      },
+      "aggs": {
+        "3": {
+          "filters": {
+            "filters": {
+              "message=\"warning\"": {
+                "query": {
+                  "query_string": {
+                    "analyze_wildcard": true,
+                    "query": "message=\"warning\""
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
