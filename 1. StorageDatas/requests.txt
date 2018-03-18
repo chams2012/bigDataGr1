@@ -1,4 +1,4 @@
-> 6 répertoires :
+﻿> 6 répertoires :
 ------------------
 
 1. 'tensorflow/tensorflow',	 
@@ -7,7 +7,6 @@
 4. 'apple/swift',	 
 5. 'Microsoft/vscode',	 
 6. 'twbs/bootstrap'
-7. 'FreeCodeCamp/FreeCodeCamp'
 _________________________________________________________________________________________________________________________________________________________________
 
 > githubarchive sur les 3 dernières années :
@@ -88,26 +87,6 @@ ________________________________________________________________________________
 ------------------------------------------------------------------
 
  
-SELECT
-  * EXCEPT(repo_name)
-FROM
-  `bigquery-public-data.github_repos.commits` AS comm,
-  UNNEST(comm.repo_name) AS repo_demo
-WHERE
-  repo_demo IN ('tensorflow/tensorflow',
-    'torvalds/linux',
-    'facebook/react',
-    'apple/swift',
-    'Microsoft/vscode',
-    'twbs/bootstrap')
-
-
-_________________________________________________________________________________________________________________________________________________________________
-
-> Table "commits" :
-> Legacy Query + Batch + Destination Table + Allow Large Option
-------------------------------------------------------------------
-  
 SELECT
   * EXCEPT(repo_name, repo_demo), repo_demo AS repo_name
 FROM
